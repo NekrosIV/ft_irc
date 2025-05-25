@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:18:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/04/25 16:12:30 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/25 17:29:35 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,14 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	std::string password = av[2];
-	Serveur myServ(port, password);
 	try
 	{
+		Serveur myServ(port, password);
 		myServ.start();
+		while (true)
+		{
+			myServ.run();
+		}
 	}
 	catch (const std::exception &e)
 	{

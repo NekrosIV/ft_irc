@@ -7,7 +7,7 @@ OBJS_DIR := ./objs
 
 HEADERS := ./include
 FILES := main.cpp \
-			Serveur.cpp
+			Serveur.cpp Client.cpp
 			
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(FILES))
