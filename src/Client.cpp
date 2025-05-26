@@ -6,50 +6,50 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 06:49:21 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 07:05:29 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
 #include "Channel.hpp"
+#include "Client.hpp"
 
-Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false), _wantsToWrite(false)
+Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false),
+	_wantsToWrite(false)
 {
 }
 
 void Client::close_fd() const
 {
 	if (_fd >= 0)
-	close(_fd);
+		close(_fd);
 }
-
 
 const std::string &Client::getNickname() const
 {
-	return _nickname;
+	return (_nickname);
 }
 
-void Client::SetNickname(const std::string Nname)
+void Client::setNickname(const std::string Nname)
 {
 	_nickname = Nname;
 }
 
 const std::string &Client::getUsername() const
 {
-	return _username;
+	return (_username);
 }
 
-void Client::SetUsername(const std::string Uname)
+void Client::setUsername(const std::string Uname)
 {
 	_username = Uname;
 }
 
 int Client::getFd() const
 {
-	return _fd;
+	return (_fd);
 }
 
-void	Client::testRegistered()
+void Client::testRegistered()
 {
 	if (!_username.empty() && !_nickname.empty())
 		_isRegistered = true;
@@ -58,7 +58,7 @@ void	Client::testRegistered()
 void Client::joinChannel(Channel *channel)
 {
 	if (_joinedChannels.count(channel))
-		return;
+		return ;
 	_joinedChannels.insert(channel);
 	channel->AddClient(this);
 }
@@ -78,11 +78,12 @@ void Client::FillReadBuffer(const std::string &read)
 
 bool Client::getCmdNextLine(std::string &line)
 {
-	size_t pos = _readBuffer.find("\r\n");
+	size_t	pos;
+
+	pos = _readBuffer.find("\r\n");
 	if (pos == std::string::npos)
-		return false;
+		return (false);
 	line = _readBuffer.substr(0, pos);
 	_readBuffer.erase(0, pos + 2);
-	return true;
+	return (true);
 }
-
