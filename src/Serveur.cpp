@@ -6,11 +6,12 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 02:18:09 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 06:49:49 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serveur.hpp"
+#include "Client.hpp"
 
 Serveur::Serveur(int port, std::string &password)
 {
@@ -70,20 +71,81 @@ void Serveur::run()
 		}
 		else
 		{
-			// send parsing
+			handleClientEvents(_events[i]); //pas fini donc pas encore test
 		}
 	}
 }
 
+void Serveur::handleClientEvents(const struct epoll_event& ev)
+{
+	Client *client = FindClient(ev.data.fd);
+	if (!client)
+	{
+		std::cerr << "recieved event for unknown fd : " << ev.data.fd << std::endl;
+    	epoll_ctl(_epollfd, EPOLL_CTL_DEL, ev.data.fd, NULL);
+    	close(ev.data.fd);
+   		return;
+	}
 
-void Serveur::setNonBlockSocket(int fd)
+	if (ev.events & EPOLLRDHUP)
+	{
+		removeClient(client); //  a faire
+		return;
+	}
+
+	if (ev.events & EPOLLIN)
+	{
+		char buffer[1024];
+		int n = recv(client->getFd(), buffer, sizeof(buffer), 0);
+		if (n <= 0)
+		{
+			removeClient(client); //  a faire
+			return;
+		}
+		try
+		{
+			client->FillReadBuffer(std::string(buffer, n));
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "Client buffer " << client->getFd() << " overflow: " << e.what() << std::endl;
+			removeClient(client); // a faire
+			return;
+		}
+		std::string line;
+		while (client->getCmdNextLine(line))
+		{
+			handleClientCommand(*client, line); //a faire
+		}
+	}
+}
+
+Client *Serveur::FindClient(const int fd)
+{
+	for (std::vector<Client>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+		if (it->getFd() == fd)
+			return &(*it);
+	return NULL;
+}
+
+void	Serveur::removeClient(Client *client)
+{
+	// a faire, retirer client partout ou il est: channel, tableaux de struct etc
+}
+
+void	Serveur::handleClientCommand(Client &client, std::string line)
+{
+	// a faire
+}
+
+void Serveur::setNonBlockSocket(const int fd)
 {
 	int flags = fcntl(fd, F_GETFL, 0);
 	CheckSyscall(flags, "get fcntl()");
 	CheckSyscall(fcntl(fd, F_SETFL, flags | O_NONBLOCK), "set fcntl()");
 }
 
-void CheckSyscall(int res, const std::string& context)
+void CheckSyscall(const int res, const std::string& context)
 {
     if (res < 0)
     {
@@ -91,3 +153,4 @@ void CheckSyscall(int res, const std::string& context)
         throw std::runtime_error(err);
     }
 }
+

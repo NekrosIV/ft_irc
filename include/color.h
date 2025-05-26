@@ -6,13 +6,12 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:12:51 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 01:06:49 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 04:49:04 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "Client.hpp"
 #include <arpa/inet.h> // inet_ntoa() si tu veux convertir adresse IP
 #include <cstdlib>
 #include <cstdlib>      // exit, atoi, strtol
@@ -27,6 +26,7 @@
 #include <sys/types.h>  // types systèmes : socket, bind, etc.
 #include <unistd.h>     // close()
 #include <vector>
+#include <set>
 
 // Reset
 #define RESET "\033[0m"

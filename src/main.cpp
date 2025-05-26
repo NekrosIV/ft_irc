@@ -6,11 +6,12 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:18:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 01:02:00 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 06:25:47 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serveur.hpp"
+
 
 int	main(int ac, char **av)
 {
@@ -42,6 +43,7 @@ int	main(int ac, char **av)
 	catch (const std::exception &e)
 	{
 		std::cerr << BRED << e.what() << '\n';
+		//ajoutez un cleanup en cas d exception arrivant apres l ouverture de fd etc etc
 		return (1);
 	}
 	return (0);
