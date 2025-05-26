@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 07:05:29 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 16:44:07 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,11 @@ void Client::setUsername(const std::string Uname)
 int Client::getFd() const
 {
 	return (_fd);
+}
+
+bool Client::isRegistered() const 
+{
+	return(_isRegistered);
 }
 
 void Client::testRegistered()

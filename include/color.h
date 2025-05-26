@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   color.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:12:51 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 04:49:04 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 16:29:30 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 #include <unistd.h>     // close()
 #include <vector>
 #include <set>
+#include <sstream>
+
 
 // Reset
 #define RESET "\033[0m"

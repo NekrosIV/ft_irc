@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 06:49:49 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 17:24:01 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void Serveur::start()
 void Serveur::run()
 {
 	int client_fd;
-	std::cout << BGREEN << "Server is waiting..." << RESET << std::endl;
+	// std::cout << BGREEN << "Server is waiting..." << RESET << std::endl;
 	int nfds = epoll_wait(_epollfd, _events, MAXEVENTS, -1);
 	CheckSyscall(nfds, "epoll_wait()");
 	for (int i = 0; i < nfds; ++i)
@@ -89,7 +89,7 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 
 	if (ev.events & EPOLLRDHUP)
 	{
-		removeClient(client); //  a faire
+		removeClient(client);
 		return;
 	}
 
@@ -99,7 +99,7 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 		int n = recv(client->getFd(), buffer, sizeof(buffer), 0);
 		if (n <= 0)
 		{
-			removeClient(client); //  a faire
+			removeClient(client);
 			return;
 		}
 		try
@@ -109,13 +109,13 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 		catch (const std::exception& e)
 		{
 			std::cerr << "Client buffer " << client->getFd() << " overflow: " << e.what() << std::endl;
-			removeClient(client); // a faire
+			removeClient(client);
 			return;
 		}
 		std::string line;
 		while (client->getCmdNextLine(line))
 		{
-			handleClientCommand(*client, line); //a faire
+			handleClientCommand(*client, line);
 		}
 	}
 }
@@ -130,12 +130,69 @@ Client *Serveur::FindClient(const int fd)
 
 void	Serveur::removeClient(Client *client)
 {
-	// a faire, retirer client partout ou il est: channel, tableaux de struct etc
+	for (std::vector<Client>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+	{
+		if (&(*it) == client)
+		{
+			_clients_vec.erase(it);
+		}
+	}
+	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
+	client->close_fd();
+	std::cout << BYELLOW << "Client " << client->getFd() << " disconnected." << RESET << std::endl;
 }
 
 void	Serveur::handleClientCommand(Client &client, std::string line)
 {
-	// a faire
+	// petit demo pour faire des test avec irssi mais pas sur que il faut faire comme sa 
+	// pour etre sur il faut lire la doc
+	std::istringstream iss(line);
+	std::string cmd;
+	iss >> cmd;
+
+	if(cmd == "NICK")
+	{
+		std::string nick;
+		iss >> nick;
+		if(!nick.empty())
+		{
+			client.setNickname(nick);
+			std::cout << "Client fd " << client.getFd() << ": NICK " << nick << std::endl;
+		}
+	}
+	else if(cmd == "USER")
+	{
+		std::string username;
+		iss >> username;
+		if(!username.empty())
+		{
+			client.setUsername(username);
+			std::cout << "Client fd " << client.getFd() << ": USER " << username << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Client fd " << client.getFd() << ": unknown command ->" << line << std::endl;
+	}
+	
+	client.testRegistered();
+	
+	if(client.isRegistered())
+	{
+		std::string nick = client.getNickname();
+		/*msg obligatoire quand un client se connect via irssi*/
+		std::string msg = ":localhost 001" + client.getNickname() + " :Welcome to my serv. " + client.getNickname() + "\r\n";
+		send(client.getFd(),msg.c_str(), msg.length(), 0);
+
+		std::string motdStart = ":localhost 375 " + nick + " :- ft_irc Message of the Day -\r\n";
+		std::string motdLine  = ":localhost 372 " + nick + " :- Bienvenue sur le serveur IRC 42 !\r\n";
+		std::string motdEnd   = ":localhost 376 " + nick + " :End of MOTD command\r\n";
+
+		send(client.getFd(), motdStart.c_str(), motdStart.length(), 0);
+		send(client.getFd(), motdLine.c_str(), motdLine.length(), 0);
+		send(client.getFd(), motdEnd.c_str(), motdEnd.length(), 0);
+	}
+	
 }
 
 void Serveur::setNonBlockSocket(const int fd)

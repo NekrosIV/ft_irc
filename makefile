@@ -1,13 +1,15 @@
 NAME :=  ircserv
 CC := g++
-CFLAGS :=  -Wall -Wextra -Werror -std=c++98
+CFLAGS :=  #-Wall -Wextra -Werror -std=c++98
 
 SRCS_DIR := ./src
 OBJS_DIR := ./objs
 
 HEADERS := ./include
 FILES := main.cpp \
-			Serveur.cpp Client.cpp
+			Serveur.cpp \
+			Client.cpp \
+			Channel.cpp
 			
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(FILES))

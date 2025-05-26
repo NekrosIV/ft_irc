@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 07:05:29 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/26 16:44:37 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Client
 	const std::string &getUsername() const;
 	void setUsername(const std::string Uname);
 	int getFd() const;
+	bool isRegistered() const;
 	void testRegistered();
 	void joinChannel(Channel *channel);
 	void leaveChannel(Channel *channel);
