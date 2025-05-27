@@ -6,14 +6,13 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 06:41:39 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/27 06:37:31 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "color.h"
-
 
 #define MAXEVENTS 1000
 
@@ -35,13 +34,11 @@ class Serveur
 	void start();
 	void run();
 	void setNonBlockSocket(const int fd);
-	void	handleClientEvents(const struct epoll_event& ev);
+	void handleClientEvents(const struct epoll_event &ev);
 	Client *FindClient(const int fd);
-	void	removeClient(Client *client);
+	void removeClient(Client *client);
 	void handleClientCommand(Client &client, std::string line);
-
+	void TryToSend(Client &client, std::string &msg);
 };
 
-
-void CheckSyscall(const int res, const std::string& context);
-
+void	CheckSyscall(const int res, const std::string &context);

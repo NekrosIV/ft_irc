@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 16:44:37 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/27 03:01:55 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,7 @@ class Client
 	void joinChannel(Channel *channel);
 	void leaveChannel(Channel *channel);
 	void FillReadBuffer(const std::string &read);
+	void FillWriteBuffer(const std::string &read);
 	bool getCmdNextLine(std::string &line);
+	bool WantsToRight();
 };

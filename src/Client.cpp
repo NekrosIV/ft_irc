@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 16:44:07 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/27 03:02:18 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int Client::getFd() const
 	return (_fd);
 }
 
-bool Client::isRegistered() const 
+bool Client::isRegistered() const
 {
 	return(_isRegistered);
 }
@@ -77,8 +77,15 @@ void Client::leaveChannel(Channel *channel)
 void Client::FillReadBuffer(const std::string &read)
 {
 	if (_readBuffer.size() + read.size() > 10000)
-		throw std::runtime_error("Client buffer overflow");
+		throw std::runtime_error("Buffer overflow");
 	_readBuffer += read;
+}
+
+void Client::FillWriteBuffer(const std::string &read)
+{
+	if (_writeBuffer.size() + read.size() > 10000)
+		throw std::runtime_error("Buffer overflow");
+	_writeBuffer += read;
 }
 
 bool Client::getCmdNextLine(std::string &line)
@@ -91,4 +98,9 @@ bool Client::getCmdNextLine(std::string &line)
 	line = _readBuffer.substr(0, pos);
 	_readBuffer.erase(0, pos + 2);
 	return (true);
+}
+
+bool Client::WantsToRight()
+{
+	return _wantsToWrite;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 17:24:01 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/27 06:44:09 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ void Serveur::run()
 			CheckSyscall(client_fd, "accept()");
 			setNonBlockSocket(client_fd);
 			ev.data.fd = client_fd;
-			ev.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP;
-			CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_ADD, client_fd, &ev), "epoll_ctl()");
+			ev.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
+			CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_ADD, client_fd, &ev), "epoll_ctl_ADD()");
 			_clients_vec.push_back(Client(client_fd));
 			std::cout << BGREEN << "Accepted client with fd: " << BWHITE << client_fd << RESET << std::endl;
 		}
@@ -82,12 +82,12 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 	if (!client)
 	{
 		std::cerr << "recieved event for unknown fd : " << ev.data.fd << std::endl;
-    	epoll_ctl(_epollfd, EPOLL_CTL_DEL, ev.data.fd, NULL);
+    	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, ev.data.fd, NULL), "epoll_ctl_DEL()");
     	close(ev.data.fd);
    		return;
 	}
 
-	if (ev.events & EPOLLRDHUP)
+	if (ev.events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
 	{
 		removeClient(client);
 		return;
@@ -130,25 +130,35 @@ Client *Serveur::FindClient(const int fd)
 
 void	Serveur::removeClient(Client *client)
 {
+	std::cout << "Coucou" << std::endl;
+	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
+	client->close_fd();
+	std::cout << BYELLOW << "Client " << client->getUsername() << " disconnected." << RESET << std::endl;
 	for (std::vector<Client>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
 	{
 		if (&(*it) == client)
 		{
+			// std::cout << "hey" << std::endl;
 			_clients_vec.erase(it);
+			break;
 		}
 	}
-	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
-	client->close_fd();
-	std::cout << BYELLOW << "Client " << client->getFd() << " disconnected." << RESET << std::endl;
 }
 
 void	Serveur::handleClientCommand(Client &client, std::string line)
 {
-	// petit demo pour faire des test avec irssi mais pas sur que il faut faire comme sa 
+	// petit demo pour faire des test avec irssi mais pas sur que il faut faire comme sa
 	// pour etre sur il faut lire la doc
 	std::istringstream iss(line);
 	std::string cmd;
 	iss >> cmd;
+
+	std::cout << "Client fd " << client.getFd() << ": unknown command -> " << line << std::endl;
+
+	if (client.WantsToRight())
+	{
+		// a faire
+	}
 
 	if(cmd == "NICK")
 	{
@@ -172,11 +182,12 @@ void	Serveur::handleClientCommand(Client &client, std::string line)
 	}
 	else
 	{
-		std::cout << "Client fd " << client.getFd() << ": unknown command ->" << line << std::endl;
+		std::cout << "Client fd " << client.getFd() << ": unknown command -> " << line << std::endl;
 	}
-	
+
+
 	client.testRegistered();
-	
+
 	if(client.isRegistered())
 	{
 		std::string nick = client.getNickname();
@@ -187,12 +198,14 @@ void	Serveur::handleClientCommand(Client &client, std::string line)
 		std::string motdStart = ":localhost 375 " + nick + " :- ft_irc Message of the Day -\r\n";
 		std::string motdLine  = ":localhost 372 " + nick + " :- Bienvenue sur le serveur IRC 42 !\r\n";
 		std::string motdEnd   = ":localhost 376 " + nick + " :End of MOTD command\r\n";
+		size_t sent = send(client.getFd(), motdStart.c_str(), motdStart.length(), 0);
 
-		send(client.getFd(), motdStart.c_str(), motdStart.length(), 0);
-		send(client.getFd(), motdLine.c_str(), motdLine.length(), 0);
-		send(client.getFd(), motdEnd.c_str(), motdEnd.length(), 0);
+		TryToSend(client, motdStart); //fonction a completer ac EPOLLOUT + wantsToRIght + savoir quand les activer/les descactiver
+		TryToSend(client, motdLine);
+		TryToSend(client, motdEnd);
+
+
 	}
-	
 }
 
 void Serveur::setNonBlockSocket(const int fd)
@@ -211,3 +224,24 @@ void CheckSyscall(const int res, const std::string& context)
     }
 }
 
+void Serveur::TryToSend(Client &client, std::string &msg)
+{
+	size_t sent = send(client.getFd(), msg.c_str(), msg.length(), 0);
+	if (sent < 0)
+		{
+			 if (errno == EAGAIN || errno == EWOULDBLOCK)
+			 {
+				 client.FillWriteBuffer(msg);
+				 //continuer la mise en place av epollout, peut etre rajouter le bool wantstowrite a true dans FillWriteBuffer jsp trop
+			 }
+			 else
+			 	removeClient(&client);
+		}
+		else if (sent < (size_t)msg.length())
+		{
+			client.FillWriteBuffer(msg.substr(sent));
+			//continuer la mise en place av epollout, peut etre rajouter le bool wantstowrite a true dans FillWriteBuffer jsp trop
+
+
+		}
+}
