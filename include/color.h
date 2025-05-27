@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:12:51 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 16:29:30 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/27 20:42:52 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,14 @@
 #include <fcntl.h>      // fcntl() pour mettre le socket en non-bloquant
 #include <iostream>     // std::cout, std::cerr
 #include <netinet/in.h> // sockaddr_in, htons(), htonl(), INADDR_ANY
+#include <set>
+#include <sstream>
 #include <string>       // std::string
 #include <sys/epoll.h>  // poll() et struct pollfd
 #include <sys/socket.h> // socket(), bind(), listen(), setsockopt()
 #include <sys/types.h>  // types systèmes : socket, bind, etc.
 #include <unistd.h>     // close()
 #include <vector>
-#include <set>
-#include <sstream>
-
 
 // Reset
 #define RESET "\033[0m"
@@ -74,3 +73,10 @@
 #define ON_WHITE "\033[47m"
 #define ON_LIGHT_GRAY "\033[48;5;250m" // Gris clair
 #define ON_DARK_GRAY "\033[48;5;240m"  // Gris foncé
+
+typedef struct s_parsed_command
+{
+	std::string prefix;
+	std::string command;
+	std::vector<std::string> params;
+}	t_parsed_command;

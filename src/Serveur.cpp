@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/27 06:44:09 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/27 21:36:24 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,67 +145,80 @@ void	Serveur::removeClient(Client *client)
 	}
 }
 
+t_parsed_command parseIrcCommand(const std::string line)
+{
+	t_parsed_command result;
+	result.prefix = "";
+	result.command = "";
+	result.params.clear();
+
+	std::string remaining = line ;
+	
+	// Etape 1 on extrait le prefix;
+	if(!remaining.empty() && remaining[0] == ':')
+	{
+		size_t space = remaining.find(' ');
+		if(space != std::string::npos)
+		{
+			result.prefix = remaining.substr(1, space - 1);
+			remaining = remaining.substr(space + 1);
+		}
+		else
+			return result;
+	}
+	
+	std::istringstream iss(remaining);
+	std::string token;
+	bool trailingStarted = false;
+	
+	// Etap	2 on extrait la commande
+	if(!(iss >> result.command))
+		return result; 
+	
+	// Etape 3 on extrait les 14 patametre
+	while (iss >> token)
+	{
+		if(token[0] == ':' && !trailingStarted)
+		{
+			trailingStarted = true;
+			std::string trailing = token.substr(1);
+			std::string rest;
+			std::getline(iss, rest);
+			trailing += rest;
+			result.params.push_back(trailing);
+			break;
+		}
+		else
+		{
+			if(result.params.size() < 14)
+				result.params.push_back(token);
+			else
+				break;
+		}
+	}
+	return(result);
+}
+
 void	Serveur::handleClientCommand(Client &client, std::string line)
 {
-	// petit demo pour faire des test avec irssi mais pas sur que il faut faire comme sa
-	// pour etre sur il faut lire la doc
-	std::istringstream iss(line);
-	std::string cmd;
-	iss >> cmd;
+	t_parsed_command cmd = parseIrcCommand(line);
+	
+	std::cout << "================= Parsed Command =================" << std::endl;
+	std::cout << "Raw line: \"" << line << "\"" << std::endl;
 
-	std::cout << "Client fd " << client.getFd() << ": unknown command -> " << line << std::endl;
-
-	if (client.WantsToRight())
-	{
-		// a faire
-	}
-
-	if(cmd == "NICK")
-	{
-		std::string nick;
-		iss >> nick;
-		if(!nick.empty())
-		{
-			client.setNickname(nick);
-			std::cout << "Client fd " << client.getFd() << ": NICK " << nick << std::endl;
-		}
-	}
-	else if(cmd == "USER")
-	{
-		std::string username;
-		iss >> username;
-		if(!username.empty())
-		{
-			client.setUsername(username);
-			std::cout << "Client fd " << client.getFd() << ": USER " << username << std::endl;
-		}
-	}
+	if (!cmd.prefix.empty())
+		std::cout << "Prefix   : [" << cmd.prefix << "]" << std::endl;
 	else
-	{
-		std::cout << "Client fd " << client.getFd() << ": unknown command -> " << line << std::endl;
-	}
+		std::cout << "Prefix   : [none]" << std::endl;
 
+	std::cout << "Command  : [" << cmd.command << "]" << std::endl;
 
-	client.testRegistered();
+	std::cout << "Params   : (" << cmd.params.size() << " param(s))" << std::endl;
+	for (size_t i = 0; i < cmd.params.size(); ++i)
+		std::cout << "  Param[" << i << "] : [" << cmd.params[i] << "]" << std::endl;
 
-	if(client.isRegistered())
-	{
-		std::string nick = client.getNickname();
-		/*msg obligatoire quand un client se connect via irssi*/
-		std::string msg = ":localhost 001" + client.getNickname() + " :Welcome to my serv. " + client.getNickname() + "\r\n";
-		send(client.getFd(),msg.c_str(), msg.length(), 0);
-
-		std::string motdStart = ":localhost 375 " + nick + " :- ft_irc Message of the Day -\r\n";
-		std::string motdLine  = ":localhost 372 " + nick + " :- Bienvenue sur le serveur IRC 42 !\r\n";
-		std::string motdEnd   = ":localhost 376 " + nick + " :End of MOTD command\r\n";
-		size_t sent = send(client.getFd(), motdStart.c_str(), motdStart.length(), 0);
-
-		TryToSend(client, motdStart); //fonction a completer ac EPOLLOUT + wantsToRIght + savoir quand les activer/les descactiver
-		TryToSend(client, motdLine);
-		TryToSend(client, motdEnd);
-
-
-	}
+	std::cout << "==================================================" << std::endl;
+	
 }
 
 void Serveur::setNonBlockSocket(const int fd)
