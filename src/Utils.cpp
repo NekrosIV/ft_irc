@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 23:38:39 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 00:10:09 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 02:58:49 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_parsed_command parseIrcCommand(const std::string line)
 	{
 		std::string trailing;
 		if (token[0] == ':')
-			std::string trailing = token.substr(1);
+			trailing = token.substr(1);
 		std::string rest;
 		std::getline(iss, rest);
 		trailing += rest;

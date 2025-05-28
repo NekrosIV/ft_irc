@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 02:11:30 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 05:26:30 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 #include "Client.hpp"
 
-Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false),
-	_wantsToWrite(false)
+Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false)
 {
 }
 
@@ -41,8 +40,17 @@ const std::string &Client::getUsername() const
 
 void Client::setUsername(const std::string Uname)
 {
-	_username = Uname.substr(0, 9);
-	_fullusername = Uname;
+	_username = Uname;
+}
+
+void Client::setRealname(const std::string realname)
+{
+	_realname = realname;
+}
+
+const std::string &Client::getRealname() const
+{
+	return (_realname);
 }
 
 int Client::getFd() const
@@ -89,6 +97,12 @@ void Client::FillWriteBuffer(const std::string &read)
 	_writeBuffer += read;
 }
 
+std::string &Client::getWriteBuffer() 
+{ 
+	return (_writeBuffer);
+}
+
+
 bool Client::getCmdNextLine(std::string &line)
 {
 	size_t	pos;
@@ -101,7 +115,3 @@ bool Client::getCmdNextLine(std::string &line)
 	return (true);
 }
 
-bool Client::WantsToRight()
-{
-	return _wantsToWrite;
-}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 02:04:04 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 05:26:11 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,24 @@ class Client
 	std::string _nickname;
 	std::string _username;
 	std::string _fullusername;
+	std::string _realname;
 	std::string _readBuffer;
 	std::string _writeBuffer;
 
 	bool _isRegistered;
 	bool _isOperator;
-	bool _wantsToWrite;
 
 	std::set<Channel *> _joinedChannels;
 
   public:
 	Client(const int fd);
 	void close_fd() const;
-	const std::string &getNickname() const;
 	void setNickname(const std::string Nname);
-	const std::string &getUsername() const;
 	void setUsername(const std::string Uname);
+	void setRealname(const std::string realname);
+	const std::string &getRealname() const;
+	const std::string &getNickname() const;
+	const std::string &getUsername() const;
 	int getFd() const;
 	bool isRegistered() const;
 	void testRegistered();
@@ -47,6 +49,6 @@ class Client
 	void leaveChannel(Channel *channel);
 	void FillReadBuffer(const std::string &read);
 	void FillWriteBuffer(const std::string &read);
+	std::string& getWriteBuffer();
 	bool getCmdNextLine(std::string &line);
-	bool WantsToRight();
 };

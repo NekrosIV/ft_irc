@@ -10,7 +10,19 @@ FILES := main.cpp \
 			Serveur.cpp \
 			Client.cpp \
 			Channel.cpp \
-			Utils.cpp
+			Utils.cpp \
+			cmdInvite.cpp \
+    		cmdJoin.cpp \
+    		cmdKick.cpp \
+    		cmdMode.cpp \
+    		cmdNick.cpp \
+    		cmdNotice.cpp \
+    		cmdPart.cpp \
+    		cmdPing.cpp \
+    		cmdPrivmsg.cpp \
+    		cmdQuit.cpp \
+    		cmdTopic.cpp \
+    		cmdUser.cpp 
 
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(FILES))

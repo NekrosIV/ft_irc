@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 01:44:45 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 05:34:08 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Serveur::Serveur(int port, std::string &password)
 	_port = port;
 	_password = password;
 	_server_fd = -1;
+	_servername = "SuperServer";
 }
 
 Serveur::~Serveur()
@@ -93,6 +94,16 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 		return;
 	}
 
+	if (ev.events & EPOLLOUT)
+	{
+		int n = TryToSend(*client, client->getWriteBuffer());
+		if(n == client->getWriteBuffer().length())
+		{
+			client->FillWriteBuffer("");
+			disableWriteEvent(*client);
+		}
+	}
+	
 	if (ev.events & EPOLLIN)
 	{
 		char buffer[1024];
@@ -175,86 +186,52 @@ void Serveur::setNonBlockSocket(const int fd)
 }
 
 
-void Serveur::TryToSend(Client &client, std::string &msg)
+int Serveur::TryToSend(Client &client, std::string msg)
 {
 	size_t sent = send(client.getFd(), msg.c_str(), msg.length(), 0);
 	if (sent < 0)
+	{
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
 		{
-			 if (errno == EAGAIN || errno == EWOULDBLOCK)
-			 {
-				 client.FillWriteBuffer(msg);
-				 //continuer la mise en place av epollout, peut etre rajouter le bool wantstowrite a true dans FillWriteBuffer jsp trop
-			 }
-			 else
-			 	removeClient(&client);
+			client.FillWriteBuffer(msg);
+			enableWriteEvent(client);
 		}
-		else if (sent < (size_t)msg.length())
-		{
-			client.FillWriteBuffer(msg.substr(sent));
-			//continuer la mise en place av epollout, peut etre rajouter le bool wantstowrite a true dans FillWriteBuffer jsp trop
-
-
-		}
+		else
+			removeClient(&client);
+	}
+	else if (sent < (size_t)msg.length())
+	{
+		client.FillWriteBuffer(msg.substr(sent));
+		enableWriteEvent(client);
+	}
+	return(sent);
 }
 
-
-void Serveur::cmdNick(Client &client, const std::string &params)
+void Serveur::sendError(Client& client, int code, const std::string& arg, const std::string& message)
 {
-
+	std::ostringstream oss;
+	oss << ":" << _servername << " "<< code << " "
+	    << (client.getNickname().empty() ? "*" : client.getNickname()) << " "
+	    << arg << " :" << message << "\r\n";
+	TryToSend(client, oss.str());
 }
 
-void Serveur::cmdJoin(Client &client, const std::string &params)
+void Serveur::enableWriteEvent(Client& client)
 {
+	struct epoll_event ev;
+	memset(&ev, 0, sizeof(ev));
+	ev.data.fd = client.getFd();
+	ev.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
+
+	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_MOD, client.getFd(), &ev),  "epoll_ctl_ADD()");
 
 }
-
-void Serveur::cmdQuit(Client &client, const std::string &params)
+void Serveur::disableWriteEvent(Client& client)
 {
+	struct epoll_event ev;
+	std::memset(&ev, 0, sizeof(ev));
+	ev.data.fd = client.getFd();
+	ev.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
 
+	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_MOD, client.getFd(), &ev),  "epoll_ctl_ADD()");
 }
-
-void Serveur::cmdUser(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdPrivmsg(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdPing(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdPart(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdKick(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdInvite(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdTopic(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdMode(Client &client, const std::string &params)
-{
-
-}
-
-void Serveur::cmdNotice(Client &client, const std::string &params)
-{
-
-}
-
