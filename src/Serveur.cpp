@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 05:34:08 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/29 00:01:20 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,18 @@ Serveur::Serveur(int port, std::string &password)
 	_password = password;
 	_server_fd = -1;
 	_servername = "SuperServer";
+	_commands["NICK"] = &Serveur::cmdNick;
+	_commands["USER"] = &Serveur::cmdUser;
+	_commands["JOIN"] = &Serveur::cmdJoin;
+	_commands["PART"] = &Serveur::cmdPart;
+	_commands["PRIVMSG"] = &Serveur::cmdPrivmsg;
+	_commands["NOTICE"] = &Serveur::cmdNotice;
+	_commands["QUIT"] = &Serveur::cmdQuit;
+	_commands["PING"] = &Serveur::cmdPing;
+	_commands["KICK"] = &Serveur::cmdKick;
+	_commands["INVITE"] = &Serveur::cmdInvite;
+	_commands["TOPIC"] = &Serveur::cmdTopic;
+	_commands["MODE"] = &Serveur::cmdMode;
 }
 
 Serveur::~Serveur()
