@@ -1,34 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Channel.hpp                                        :+:      :+:    :+:   */
+/*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/26 04:34:17 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/27 23:41:17 by pscala           ###   ########.fr       */
+/*   Created: 2025/05/27 23:38:52 by pscala            #+#    #+#             */
+/*   Updated: 2025/05/27 23:46:22 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #pragma once
 
-#include "Utils.hpp"
+#include "color.hpp"
 
-class	Client;
-
-class Channel
+typedef struct s_parsed_command
 {
-  private:
-	std::string _name;
-	std::string _topic;
+	std::string prefix;
+	std::string command;
+	std::vector<std::string> params;
+}	t_parsed_command;
 
-	std::set<Client *> _members;
-	std::set<Client *> _operators;
-
-  public:
-	Channel(const std::string name);
-	~Channel();
-	void AddClient(const Client *newMember);
-	void RemoveClient(const Client *member);
-	void RemoveOperator(const Client *op);
-};
+t_parsed_command parseIrcCommand(const std::string line);
+void CheckSyscall(const int res, const std::string& context);

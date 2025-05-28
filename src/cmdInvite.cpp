@@ -1,34 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Channel.hpp                                        :+:      :+:    :+:   */
+/*   cmdInvite.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/26 04:34:17 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/27 23:41:17 by pscala           ###   ########.fr       */
+/*   Created: 2025/05/28 01:51:46 by pscala            #+#    #+#             */
+/*   Updated: 2025/05/28 01:51:47 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "Serveur.hpp"
 
-#include "Utils.hpp"
-
-class	Client;
-
-class Channel
+void Serveur::cmdInvite(Client &client, const std::string &params)
 {
-  private:
-	std::string _name;
-	std::string _topic;
-
-	std::set<Client *> _members;
-	std::set<Client *> _operators;
-
-  public:
-	Channel(const std::string name);
-	~Channel();
-	void AddClient(const Client *newMember);
-	void RemoveClient(const Client *member);
-	void RemoveOperator(const Client *op);
-};
+	// TODO: implement Invite
+}

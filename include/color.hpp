@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   color.hpppp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:12:51 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/27 20:42:52 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/27 23:32:47 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <sys/types.h>  // types systèmes : socket, bind, etc.
 #include <unistd.h>     // close()
 #include <vector>
+#include <map>
 
 // Reset
 #define RESET "\033[0m"
@@ -74,9 +75,3 @@
 #define ON_LIGHT_GRAY "\033[48;5;250m" // Gris clair
 #define ON_DARK_GRAY "\033[48;5;240m"  // Gris foncé
 
-typedef struct s_parsed_command
-{
-	std::string prefix;
-	std::string command;
-	std::vector<std::string> params;
-}	t_parsed_command;

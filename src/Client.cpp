@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/27 03:02:18 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 02:11:30 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ const std::string &Client::getUsername() const
 
 void Client::setUsername(const std::string Uname)
 {
-	_username = Uname;
+	_username = Uname.substr(0, 9);
+	_fullusername = Uname;
 }
 
 int Client::getFd() const

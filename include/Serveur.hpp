@@ -6,15 +6,17 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/27 06:37:31 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 02:03:23 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "color.h"
+#include "Utils.hpp"
 
 #define MAXEVENTS 1000
+
+typedef void (Serveur::*CommandFunc)(Client &, const std::string &);
 
 class	Client;
 
@@ -27,6 +29,8 @@ class Serveur
 	std::string _password;
 	struct epoll_event _events[MAXEVENTS];
 	std::vector<Client> _clients_vec;
+	std::map<std::string, CommandFunc> _commands;
+	std::set<std::string> _ClientsNicknames;
 
   public:
 	Serveur(int port, std::string &password);
@@ -39,6 +43,18 @@ class Serveur
 	void removeClient(Client *client);
 	void handleClientCommand(Client &client, std::string line);
 	void TryToSend(Client &client, std::string &msg);
+
+	void cmdNick(Client &client, const std::string &params);
+    void cmdJoin(Client &client, const std::string &params);
+    void cmdQuit(Client &client, const std::string &params);
+	void cmdUser(Client &client, const std::string &params);
+    void cmdPing(Client &client, const std::string &params);
+    void cmdPart(Client &client, const std::string &params);
+    void cmdKick(Client &client, const std::string &params);
+    void cmdMode(Client &client, const std::string &params);
+    void cmdTopic(Client &client, const std::string &params);
+    void cmdInvite(Client &client, const std::string &params);
+    void cmdNotice(Client &client, const std::string &params);
+    void cmdPrivmsg(Client &client, const std::string &params);
 };
 
-void	CheckSyscall(const int res, const std::string &context);

@@ -6,13 +6,13 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/27 03:01:55 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 02:04:04 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "color.h"
+#include "Utils.hpp"
 
 class	Serveur;
 class	Channel;
@@ -23,6 +23,7 @@ class Client
 	int _fd;
 	std::string _nickname;
 	std::string _username;
+	std::string _fullusername;
 	std::string _readBuffer;
 	std::string _writeBuffer;
 
