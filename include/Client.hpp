@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 05:26:11 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/28 08:07:14 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ class Client
 	const std::string &getRealname() const;
 	const std::string &getNickname() const;
 	const std::string &getUsername() const;
+	std::string Client::getPrefix() const;
+	const std::set<Channel *> &getJoinedChannels() const;
 	int getFd() const;
 	bool isRegistered() const;
 	void testRegistered();
@@ -51,4 +53,6 @@ class Client
 	void FillWriteBuffer(const std::string &read);
 	std::string& getWriteBuffer();
 	bool getCmdNextLine(std::string &line);
+	Channel	*FindChannel(std::string channelName);
+
 };

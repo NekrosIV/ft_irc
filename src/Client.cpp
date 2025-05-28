@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 05:26:30 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/28 08:06:00 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,8 @@ void Client::FillWriteBuffer(const std::string &read)
 	_writeBuffer += read;
 }
 
-std::string &Client::getWriteBuffer() 
-{ 
+std::string &Client::getWriteBuffer()
+{
 	return (_writeBuffer);
 }
 
@@ -115,3 +115,24 @@ bool Client::getCmdNextLine(std::string &line)
 	return (true);
 }
 
+const std::set<Channel *> &Client::getJoinedChannels() const
+{
+	return (_joinedChannels);
+}
+
+std::string Client::getPrefix() const
+{
+	return(":" + getNickname() + "!" + getUsername() + "@localhost");
+}
+
+
+Channel	*Client::FindChannel(std::string channelName)
+{
+
+	for (std::set<Channel*>::const_iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+	{
+		if ((*it)->getChannelName() == channelName)
+			return *it;
+	}
+	return NULL;
+}

@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 04:34:17 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/27 23:41:17 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/28 08:00:15 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,6 @@ class Channel
 	void AddClient(const Client *newMember);
 	void RemoveClient(const Client *member);
 	void RemoveOperator(const Client *op);
+	const std::string &getChannelName() const;
+	const std::set<Client *> &getClients() const;
 };
