@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:08 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 06:21:33 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 04:31:06 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,13 @@
 
 void Serveur::cmdPing(Client &client, const std::vector<std::string>& params)
 {
-	if (params.size() < 1)
+	if (params.empty())
 	{
-		sendError(client, 461, "PING", "Not enough parameters");
+		sendError(client, 409, "PING", "No origin specified");
 		return;
 	}
 
-	std::ostringstream oss;
-	oss << "PONG :" << params[0] << "\r\n";
+	std::string msg = "PONG " + _servername + " :" + params[0] + "\r\n";
 
-	TryToSend(client, oss.str());
+	TryToSend(client, msg);
 }

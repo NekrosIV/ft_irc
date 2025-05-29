@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:19 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 04:11:54 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/29 04:00:48 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,8 @@ void Serveur::cmdUser(Client &client, const std::vector<std::string> &params)
     client.setRealname(params[3]);
 
     client.testRegistered();
+    if(client.isRegistered() == true)
+    {
+        sendWelcomeMessages(client);
+    }
 }

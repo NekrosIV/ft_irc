@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdNick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:58 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/29 00:44:24 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 05:20:31 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,13 @@ void Serveur::cmdNick(Client &client, const std::vector<std::string>& params)
 		return;
 	}
 	
+	std::string old_name = client.getNickname();
+	
 	client.setNickname(params[0]);
+	
+	std::ostringstream msg;
+	msg << ":" << old_name << "!" << client.getUsername() << "@localhost" << " NICK " << client.getNickname() << "\r\n";
+	
+	TryToSend(client, msg.str());
 	client.testRegistered();
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 01:24:56 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 03:56:42 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,16 @@ void Client::setUsername(const std::string Uname)
 	_username = Uname;
 }
 
+void Client::setHasPass(bool status)
+{
+	_hasPass = status;
+}
+
+void Client::setisOperator(bool status)
+{
+	_isOperator = status;
+}
+
 void Client::setRealname(const std::string realname)
 {
 	_realname = realname;
@@ -65,8 +75,13 @@ bool Client::isRegistered() const
 
 void Client::testRegistered()
 {
-	if (!_username.empty() && !_nickname.empty() && _hasPass)
-		_isRegistered = true;
+	if(!isRegistered())
+	{
+		if (!_username.empty() && !_nickname.empty() && _hasPass)
+		{
+			_isRegistered = true;
+		}
+	}
 }
 
 void Client::joinChannel(Channel *channel)

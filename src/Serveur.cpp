@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 00:01:20 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/29 04:02:26 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,12 @@ Serveur::Serveur(int port, std::string &password)
 	_password = password;
 	_server_fd = -1;
 	_servername = "SuperServer";
+	_serverVersion = "1.0";
 	_commands["NICK"] = &Serveur::cmdNick;
 	_commands["USER"] = &Serveur::cmdUser;
 	_commands["JOIN"] = &Serveur::cmdJoin;
 	_commands["PART"] = &Serveur::cmdPart;
+	_commands["PASS"] = &Serveur::cmdPass;
 	_commands["PRIVMSG"] = &Serveur::cmdPrivmsg;
 	_commands["NOTICE"] = &Serveur::cmdNotice;
 	_commands["QUIT"] = &Serveur::cmdQuit;
@@ -187,6 +189,15 @@ void	Serveur::handleClientCommand(Client &client, std::string line)
 		std::cout << "  Param[" << i + 1 << "] : [" << cmd.params[i] << "]" << std::endl;
 
 	std::cout << "==================================================" << std::endl;
+		
+	std::map<std::string, CommandFunc>::iterator it = _commands.find(cmd.command);
+	if (it != _commands.end())
+	{
+		CommandFunc func = it->second;
+		(this->*func)(client, cmd.params);
+	}
+	else if (cmd.command != "CAP")
+		sendError(client, 421, cmd.command, "Unknown command");
 
 }
 
@@ -246,4 +257,35 @@ void Serveur::disableWriteEvent(Client& client)
 	ev.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
 
 	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_MOD, client.getFd(), &ev),  "epoll_ctl_ADD()");
+}
+
+void Serveur::sendWelcomeMessages(Client &client)
+{
+	std::ostringstream msg;
+
+	msg << ":" << _servername << " 001 " << client.getNickname()
+	    << " :Welcome to the Internet Relay Network "
+	    << client.getNickname() << "!" << client.getUsername()
+	    << "@localhost\r\n";
+	TryToSend(client, msg.str());
+	msg.str("");
+	msg.clear();
+
+	msg << ":" << _servername << " 002 " << client.getNickname()
+	    << " :Your host is " << _servername
+	    << ", running version " << _serverVersion << "\r\n";
+	TryToSend(client, msg.str());
+	msg.str(""); 
+	msg.clear();
+
+	msg << ":" << _servername << " 003 " << client.getNickname()
+	    << " :This server was created " << __DATE__ << "\r\n";
+	TryToSend(client, msg.str());
+	msg.str(""); 
+	msg.clear();
+
+	msg << ":" << _servername << " 004 " << client.getNickname()
+	    << " " << _servername << " " << _serverVersion
+	    << " o oitlks\r\n";
+	TryToSend(client, msg.str());
 }

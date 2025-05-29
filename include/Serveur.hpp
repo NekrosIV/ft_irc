@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 01:02:37 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 03:54:04 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ class Serveur
 	void removeClient(Client *client);
 	void handleClientCommand(Client &client, std::string line);
 	int TryToSend(Client &client, std::string msg);
+	void sendWelcomeMessages(Client &client);
+
 	void sendError(Client &client, int code, const std::string &arg, const std::string &message);
 	void enableWriteEvent(Client &client);
 	void disableWriteEvent(Client &client);
@@ -49,6 +51,7 @@ class Serveur
 	void cmdUser(Client &client, const std::vector<std::string> &params);
 	void cmdPing(Client &client, const std::vector<std::string> &params);
 	void cmdPart(Client &client, const std::vector<std::string> &params);
+	void cmdPass(Client &client, const std::vector<std::string>& params);
 	void cmdKick(Client &client, const std::vector<std::string> &params);
 	void cmdMode(Client &client, const std::vector<std::string> &params);
 	void cmdTopic(Client &client, const std::vector<std::string> &params);
@@ -66,6 +69,7 @@ class Serveur
 	std::map<std::string, CommandFunc> _commands;
 	std::set<std::string> _ClientsNicknames;
 	std::string _servername;
+	std::string _serverVersion;
 	std::set<Channel *> _Channels;
 
 

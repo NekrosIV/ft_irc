@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 01:23:38 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 03:38:54 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ class Client
 	void setNickname(const std::string Nname);
 	void setUsername(const std::string Uname);
 	void setRealname(const std::string realname);
+	void setHasPass(bool status);
+	void setisOperator(bool status);
 	const std::string &getRealname() const;
 	const std::string &getNickname() const;
 	const std::string &getUsername() const;
