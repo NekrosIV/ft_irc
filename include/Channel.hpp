@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 04:34:17 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 08:00:15 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 06:48:07 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,17 @@ class Channel
 	std::string _name;
 	std::string _topic;
 
+	int _maxMembers;
+
+	bool _isPrivate;
+	bool _isSecret;
+	bool _requierPass;
+	bool _isInviteOnly;
+
 	std::set<Client *> _members;
 	std::set<Client *> _operators;
+	std::set<Client *> _bannedMembers;
+	std::set<Client *> _invitedMembers;
 
   public:
 	Channel(const std::string name);

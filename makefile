@@ -15,15 +15,15 @@ FILES := main.cpp \
     		cmdJoin.cpp \
     		cmdKick.cpp \
     		cmdMode.cpp \
-    		cmd/cmdNick.cpp \
+    		cmdNick.cpp \
     		cmdNotice.cpp \
     		cmdPart.cpp \
-			cmd/cmdPass.cpp \
-    		cmd/cmdPing.cpp \
+			cmdPass.cpp \
+    		cmdPing.cpp \
     		cmdPrivmsg.cpp \
     		cmdQuit.cpp \
     		cmdTopic.cpp \
-    		cmd/cmdUser.cpp 
+    		cmdUser.cpp
 
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(FILES))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 04:02:26 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/29 06:28:11 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 			disableWriteEvent(*client);
 		}
 	}
-	
+
 	if (ev.events & EPOLLIN)
 	{
 		char buffer[1024];
@@ -155,6 +155,10 @@ Client *Serveur::FindClient(const int fd)
 
 void	Serveur::removeClient(Client *client)
 {
+		std::ostringstream oss;
+	oss << "ERROR :Closing Link: " << client->getNickname() << " (Client Quit)\r\n";
+	TryToSend(*client, oss.str());
+	
 	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
 	client->close_fd();
 	std::cout << BYELLOW << "Client " << client->getUsername() << " disconnected." << RESET << std::endl;
@@ -189,7 +193,7 @@ void	Serveur::handleClientCommand(Client &client, std::string line)
 		std::cout << "  Param[" << i + 1 << "] : [" << cmd.params[i] << "]" << std::endl;
 
 	std::cout << "==================================================" << std::endl;
-		
+
 	std::map<std::string, CommandFunc>::iterator it = _commands.find(cmd.command);
 	if (it != _commands.end())
 	{
@@ -275,13 +279,13 @@ void Serveur::sendWelcomeMessages(Client &client)
 	    << " :Your host is " << _servername
 	    << ", running version " << _serverVersion << "\r\n";
 	TryToSend(client, msg.str());
-	msg.str(""); 
+	msg.str("");
 	msg.clear();
 
 	msg << ":" << _servername << " 003 " << client.getNickname()
 	    << " :This server was created " << __DATE__ << "\r\n";
 	TryToSend(client, msg.str());
-	msg.str(""); 
+	msg.str("");
 	msg.clear();
 
 	msg << ":" << _servername << " 004 " << client.getNickname()
