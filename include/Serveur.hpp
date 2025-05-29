@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 07:58:19 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 01:02:37 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #define MAXEVENTS 1000
 
 class	Client;
+class	Channel;
 
 class Serveur
 {

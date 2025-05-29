@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:10 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 08:09:31 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 00:55:57 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,13 @@ bool Serveur::channelExists(const std::string& name) const
 
 void Serveur::cmdPrivmsg(Client &client, const std::vector<std::string>& params)
 {
+
+	if (params.size() == 0 || params[0].empty())
+	{
+		sendError(client, 411, "PRIVMSG", "No recipient given");
+		return;
+	}
+	
 	if (params.size() < 2)
 	{
 		sendError(client, 461, "PRIVMSG", "Not enough parameters");

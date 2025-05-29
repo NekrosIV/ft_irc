@@ -6,14 +6,14 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/28 08:06:00 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 01:24:56 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 #include "Client.hpp"
 
-Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false)
+Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false), _hasPass(false)
 {
 }
 
@@ -65,7 +65,7 @@ bool Client::isRegistered() const
 
 void Client::testRegistered()
 {
-	if (!_username.empty() && !_nickname.empty())
+	if (!_username.empty() && !_nickname.empty() && _hasPass)
 		_isRegistered = true;
 }
 

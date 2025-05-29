@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:58 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 07:04:21 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/29 00:44:24 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,18 @@ void Serveur::cmdNick(Client &client, const std::vector<std::string>& params)
 {
 	if (params.size() < 1)
 	{
-		sendError(client, 461, "NICK", "Not enough parameters");
+		sendError(client, 431, "NICK", "No nickname given");
         return;
+	}
+
+	if (client.getNickname() == params[0])
+		return;
+
+
+	if (FindClient(params[0]) != NULL)
+	{
+		sendError(client, 433, params[0], "Nickname is already in use");
+			return;
 	}
 
 	if (!isValidNickname(params[0]))
@@ -49,6 +59,7 @@ void Serveur::cmdNick(Client &client, const std::vector<std::string>& params)
 		sendError(client, 432, params[0], "Erroneous nickname");
 		return;
 	}
+	
 	client.setNickname(params[0]);
 	client.testRegistered();
 }
