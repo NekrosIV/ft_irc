@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdNick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:58 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/29 06:34:32 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/30 05:37:52 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,18 @@ void Serveur::cmdNick(Client &client, const std::vector<std::string>& params)
 
 	client.setNickname(params[0]);
 
-	std::ostringstream msg;
-	msg << ":" << old_name << "!" << client.getUsername() << "@localhost" << " NICK " << client.getNickname() << "\r\n";
-	
-	TryToSend(client, msg.str());
+	if(!old_name.empty())
+	{
+		std::ostringstream msg;
+		msg << ":" << old_name << "!" << client.getUsername() << "@localhost" << " NICK " << client.getNickname() << "\r\n";
+		const std::set<Channel*>& chans = client.getJoinedChannels();
+		if (!chans.empty())
+		{
+			for (std::set<Channel*>::const_iterator it = chans.begin(); it != chans.end(); ++it)
+			broadcastToChannel(*it, msg.str());
+		}
+		else
+			TryToSend(client, msg.str());
+	}
 	client.testRegistered();
 }

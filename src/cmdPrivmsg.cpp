@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPrivmsg.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:10 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/29 00:55:57 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/30 05:36:55 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,25 @@
 Client *Serveur::FindClient(const std::string &name)
 {
 
-	for (std::vector<Client>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
-		if (it->getNickname() == name)
-			return &(*it);
+	for (std::vector<Client*>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+		if ((*it)->getNickname() == name)
+			return (*it);
 	return NULL;
 
 }
 
 bool Serveur::channelExists(const std::string& name) const
 {
-	for (std::set<Channel*>::const_iterator it = _Channels.begin(); it != _Channels.end(); ++it)
-	{
-		if ((*it)->getChannelName() == name)
-			return true;
-	}
-	return false;
+	return (_channels.find(name) != _channels.end());
 }
 
 void Serveur::cmdPrivmsg(Client &client, const std::vector<std::string>& params)
 {
-
+	if (!client.isRegistered())
+    {
+        sendError(client, 462, "PRIVMSG", "You may not reregister");
+        return;
+    }
 	if (params.size() == 0 || params[0].empty())
 	{
 		sendError(client, 411, "PRIVMSG", "No recipient given");
@@ -57,24 +56,24 @@ void Serveur::cmdPrivmsg(Client &client, const std::vector<std::string>& params)
 		message += params[i];
 	}
 
-	Channel *targetChannel = client.FindChannel(params[0]);
+	Channel *targetChannel = getChannel(params[0]);
 	if (targetChannel)
 	{
-		for (std::set<Client*>::const_iterator it = targetChannel->getClients().begin(); it != targetChannel->getClients().end(); ++it)
+		if (!targetChannel->isMember(&client))
+		{
+			sendError(client, 442, params[0], "You're not on that channel");
+			return;
+		}
+	
+		std::ostringstream oss;
+		oss << ":" << client.getPrefix() << " PRIVMSG " << targetChannel->getChannelName() << " :" << message << "\r\n";
+	
+		const std::set<Client*>& members = targetChannel->getClients();
+		for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
 		{
 			if (*it != &client)
-			{
-				std::ostringstream oss;
-				oss << client.getPrefix() << " PRIVMSG " << targetChannel->getChannelName() << " :" << message << "\r\n";
 				TryToSend(**it, oss.str());
-			}
 		}
-		return;
-	}
-
-	else if (channelExists(params[0]))
-	{
-		sendError(client, 442, params[0], "You're not on that channel");
 		return;
 	}
 

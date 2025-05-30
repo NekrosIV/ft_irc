@@ -11,6 +11,7 @@ FILES := main.cpp \
 			Client.cpp \
 			Channel.cpp \
 			Utils.cpp \
+			cmdError.cpp \
 			cmdInvite.cpp \
     		cmdJoin.cpp \
     		cmdKick.cpp \

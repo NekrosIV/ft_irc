@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 03:56:42 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/29 19:57:37 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,12 @@ int Client::getFd() const
 bool Client::isRegistered() const
 {
 	return(_isRegistered);
+}
+
+
+bool Client::get_hasPass() const
+{
+	return(_hasPass);
 }
 
 void Client::testRegistered()

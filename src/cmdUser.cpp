@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:19 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/29 04:00:48 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/30 01:23:38 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,12 @@ static bool isValidUsername(const std::string& name)
 
 void Serveur::cmdUser(Client &client, const std::vector<std::string> &params)
 {
+    if(client.get_hasPass() == false)
+		cmdError(client,"Access denied by configuration");
+    
     if (client.isRegistered())
     {
-        sendError(client, 462, "", "You may not reregister");
+        sendError(client, 462, "USER", "You may not reregister");
         return;
     }
 

@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 03:54:04 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/30 05:04:31 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,11 @@ class Serveur
 	void sendError(Client &client, int code, const std::string &arg, const std::string &message);
 	void enableWriteEvent(Client &client);
 	void disableWriteEvent(Client &client);
+	Channel* getChannel(const std::string& name);
+	Channel* getOrCreateChannel(const std::string& name);
+	void broadcastToChannel(Channel* channel, const std::string& message);
 	bool channelExists(const std::string& name) const;
+	void deleteChannel(const std::string& name);
 
 
 	void cmdNick(Client &client, const std::vector<std::string> &params);
@@ -59,19 +63,19 @@ class Serveur
 	void cmdNotice(Client &client, const std::vector<std::string> &params);
 	void cmdPrivmsg(Client &client, const std::vector<std::string> &params);
 
+	void cmdError(Client &client, std::string reason);
+
   private:
 	int _port;
 	int _server_fd;
 	int _epollfd;
 	std::string _password;
 	struct epoll_event _events[MAXEVENTS];
-	std::vector<Client> _clients_vec;
+	std::vector<Client*> _clients_vec;
 	std::map<std::string, CommandFunc> _commands;
 	std::set<std::string> _ClientsNicknames;
 	std::string _servername;
 	std::string _serverVersion;
-	std::set<Channel *> _Channels;
-
-
+	std::map<std::string, Channel*> _channels;
 
 };

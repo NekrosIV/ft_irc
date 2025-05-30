@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 06:28:11 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/30 05:08:46 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serveur.hpp"
+#include "Channel.hpp"
 #include "Client.hpp"
 
 Serveur::Serveur(int port, std::string &password)
@@ -39,8 +40,14 @@ Serveur::~Serveur()
 {
 	if (_server_fd > 0)
 		close(_server_fd);
-	for (std::vector<Client>::const_iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
-		it->close_fd();
+	for (std::vector<Client *>::const_iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+	{
+		(*it)->close_fd();
+		delete *it;
+	}
+	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+		delete it->second;
+	_channels.clear();
 }
 
 void Serveur::start()
@@ -81,7 +88,8 @@ void Serveur::run()
 			ev.data.fd = client_fd;
 			ev.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
 			CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_ADD, client_fd, &ev), "epoll_ctl_ADD()");
-			_clients_vec.push_back(Client(client_fd));
+			Client* newClient = new Client(client_fd);
+			_clients_vec.push_back(newClient);
 			std::cout << BGREEN << "Accepted client with fd: " << BWHITE << client_fd << RESET << std::endl;
 		}
 		else
@@ -147,26 +155,23 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 
 Client *Serveur::FindClient(const int fd)
 {
-	for (std::vector<Client>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
-		if (it->getFd() == fd)
-			return &(*it);
+	for (std::vector<Client *>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+		if ((*it)->getFd() == fd)
+			return (*it);
 	return NULL;
 }
 
 void	Serveur::removeClient(Client *client)
-{
-		std::ostringstream oss;
-	oss << "ERROR :Closing Link: " << client->getNickname() << " (Client Quit)\r\n";
-	TryToSend(*client, oss.str());
-	
+{	
 	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
 	client->close_fd();
-	std::cout << BYELLOW << "Client " << client->getUsername() << " disconnected." << RESET << std::endl;
-	for (std::vector<Client>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+	std::cout << BYELLOW << "Client " << (client->getNickname().empty() ? "*" : client->getNickname()) << " disconnected." << RESET << std::endl;
+	
+	for (std::vector<Client*>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
 	{
-		if (&(*it) == client)
+		if (*it == client)
 		{
-			// std::cout << "hey" << std::endl;
+			delete *it;
 			_clients_vec.erase(it);
 			break;
 		}
@@ -292,4 +297,41 @@ void Serveur::sendWelcomeMessages(Client &client)
 	    << " " << _servername << " " << _serverVersion
 	    << " o oitlks\r\n";
 	TryToSend(client, msg.str());
+}
+
+Channel* Serveur::getChannel(const std::string& name)
+{
+	std::map<std::string, Channel*>::iterator it = _channels.find(name);
+	if (it != _channels.end())
+		return it->second;
+	return NULL;
+}
+
+Channel* Serveur::getOrCreateChannel(const std::string& name)
+{
+	Channel* chan = getChannel(name);
+	if (!chan)
+	{
+		chan = new Channel(name);
+		_channels[name] = chan;
+	}
+	return chan;
+}
+
+void Serveur::broadcastToChannel(Channel* channel, const std::string& message)
+{
+	const std::set<Client*>& members = channel->getClients();
+	for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
+	{
+		TryToSend(**it, message);
+	}
+}
+void Serveur::deleteChannel(const std::string& name)
+{
+	std::map<std::string, Channel*>::iterator it = _channels.find(name);
+	if (it != _channels.end())
+	{
+		delete it->second;
+		_channels.erase(it);
+	}
 }

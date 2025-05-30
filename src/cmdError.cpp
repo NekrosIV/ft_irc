@@ -1,35 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmdPass.cpp                                        :+:      :+:    :+:   */
+/*   cmdError.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/29 02:58:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/30 01:22:11 by kasingh          ###   ########.fr       */
+/*   Created: 2025/05/29 22:29:02 by kasingh           #+#    #+#             */
+/*   Updated: 2025/05/29 22:32:32 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+
 #include "Serveur.hpp"
+#include "Client.hpp"
 
-void Serveur::cmdPass(Client &client, const std::vector<std::string> &params)
+void Serveur::cmdError(Client &client, std::string reason)
 {
-	if (params.empty())
-	{
-		sendError(client, 461, "PASS", "Not enough parameters");
-		return ;
-	}
+	std::ostringstream msg;
 
-	if (client.isRegistered())
-	{
-		sendError(client, 462, "PASS", "You may not reregister");
-		return ;
-	}
+	msg << "ERROR :Closing link: (" 
+	    << (client.getNickname().empty() ? "*" : client.getNickname())
+	    << "@" << "127.0.0.1"
+	    << ") [" << reason << "]\r\n";
 
-	if (params[0] != _password)
-	{
-		return ;
-	}
-	client.setHasPass(true);
+	TryToSend(client, msg.str());
+    removeClient(&client);
 }

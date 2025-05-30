@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 03:38:54 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/29 19:57:56 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Client
 	const std::string &getRealname() const;
 	const std::string &getNickname() const;
 	const std::string &getUsername() const;
+	bool get_hasPass() const;
 	std::string getPrefix() const;
 	const std::set<Channel *> &getJoinedChannels() const;
 	int getFd() const;
