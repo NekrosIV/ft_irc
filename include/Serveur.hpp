@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/31 04:06:45 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 07:30:36 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ class	Channel;
 class Serveur
 {
   public:
-
-	typedef void (Serveur::*CommandFunc)(Client &, const std::vector<std::string> &);
+	typedef void (Serveur::*CommandFunc)(Client &,
+		const std::vector<std::string> &);
 
 	Serveur(int port, std::string &password);
 	~Serveur();
@@ -42,12 +42,11 @@ class Serveur
 	void sendError(Client &client, int code, const std::string &arg, const std::string &message);
 	void enableWriteEvent(Client &client);
 	void disableWriteEvent(Client &client);
-	Channel* getChannel(const std::string& name);
-	Channel* getOrCreateChannel(const std::string& name);
-	void broadcastToChannel(Channel* channel, const std::string& message);
-	bool channelExists(const std::string& name) const;
-	void deleteChannel(const std::string& name);
-
+	Channel *getChannel(const std::string &name);
+	Channel *getOrCreateChannel(const std::string &name);
+	void broadcastToChannel(Channel *channel, const std::string &message);
+	bool channelExists(const std::string &name) const;
+	void deleteChannel(const std::string &name);
 
 	void cmdNick(Client &client, const std::vector<std::string> &params);
 	void cmdJoin(Client &client, const std::vector<std::string> &params);
@@ -56,13 +55,18 @@ class Serveur
 	void cmdUser(Client &client, const std::vector<std::string> &params);
 	void cmdPing(Client &client, const std::vector<std::string> &params);
 	void cmdPart(Client &client, const std::vector<std::string> &params);
-	void cmdPass(Client &client, const std::vector<std::string>& params);
+	void cmdPass(Client &client, const std::vector<std::string> &params);
 	void cmdKick(Client &client, const std::vector<std::string> &params);
 	void cmdMode(Client &client, const std::vector<std::string> &params);
 	void cmdTopic(Client &client, const std::vector<std::string> &params);
 	void cmdInvite(Client &client, const std::vector<std::string> &params);
 	void cmdNotice(Client &client, const std::vector<std::string> &params);
 	void cmdPrivmsg(Client &client, const std::vector<std::string> &params);
+	bool testKick(Client &client, Client &target, Channel *channel);
+	void kickClient(Client &client, Channel *channel);
+	bool testInvite(Client &client, Client &target, Channel *channel);
+
+
 
 	void cmdError(Client &client, std::string reason);
 
@@ -72,11 +76,10 @@ class Serveur
 	int _epollfd;
 	std::string _password;
 	struct epoll_event _events[MAXEVENTS];
-	std::vector<Client*> _clients_vec;
+	std::vector<Client *> _clients_vec;
 	std::map<std::string, CommandFunc> _commands;
 	std::set<std::string> _ClientsNicknames;
 	std::string _servername;
 	std::string _serverVersion;
-	std::map<std::string, Channel*> _channels;
-
+	std::map<std::string, Channel *> _channels;
 };

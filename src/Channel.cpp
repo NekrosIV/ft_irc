@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 07:03:29 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 04:15:43 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 07:50:46 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Channel::Channel(const std::string name)
 	_isSecret = false;
 	_requierPass = false;
 	_isInviteOnly = false;
-	
+
 }
 
 Channel::~Channel()
@@ -78,8 +78,9 @@ void Channel::addOperator(Client *client)
 
 void Channel::invite(Client *client)
 {
+	if (this->isInvited(client))
+		return;
 	_invitedMembers.insert(client);
-	
 }
 
 void Channel::ban(Client *client)

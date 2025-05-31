@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:49 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 04:39:51 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 06:21:20 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,24 +21,24 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 		sendError(client, 479, chanName, "Bad channel mask");
 		return;
 	}
-	
+
 	Channel *chan = getOrCreateChannel(chanName);
 
 	if(chan->isMember(&client))
 		return;
-		
+
 	if(chan->isBanned(&client))
 	{
 		sendError(client, 474, chanName, "You are banned from this channel");
 		return;
 	}
-	
+
 	if(chan->isInvitedOnly() && !chan->isInvited(&client))
 	{
 		sendError(client, 473, chanName, "Cannot join channel (+i)");
 		return;
 	}
-	
+
 	if(chan->getLimit() > 0 && chan->getClients().size() >= chan->getLimit())
 	{
 		sendError(client, 471 , chanName, "Cannot join channel (+l)");
@@ -48,14 +48,14 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 	chan->AddClient(&client);
 	client.joinChannel(chan);
 	// chan->removeInvitation(&client);
-	
+
 	if (chan->getClients().size() == 1)
 		chan->addOperator(&client);
 	std::ostringstream joinMsg;
-	
+
 	joinMsg << ":" << client.getPrefix() << "JOIN" << chanName << "\r\n";
 	broadcastToChannel(chan,joinMsg.str());
-	
+
 	std::ostringstream names;
 	names << ":" << _servername << " 353 " << client.getNickname()
 	      << " = " << chanName << " :";
@@ -74,11 +74,11 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 		        << " " << chanName << " :No topic is set\r\n";
 		TryToSend(client, notopic.str());
 	}
-	
+
 	const std::set<Client *> &members = chan->getClients();
 	for (std::set<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
 	{
-		if (it != members.begin()) 
+		if (it != members.begin())
 			names << " ";
 		if (chan->isOperator(*it))
 			names << "@";
@@ -113,13 +113,13 @@ void Serveur::cmdJoin(Client &client, const std::vector<std::string> &params)
 	std::vector<std::string> keys;
 	if(params.size() > 1)
 		keys = splitCommaList(params[1]);
-	
+
 	for (size_t i = 0; i < chanNames.size(); ++i)
 	{
 		std::string chanName = chanNames[i];
 		std::string key = (i < keys.size()) ? keys[i] : "";
-		
-		joinSingleChannel(client,chanName,key);
+
+		joinSingleChannel(client, chanName, key);
 	}
 
 }

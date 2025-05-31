@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdQuit.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:13 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/30 05:12:21 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 06:14:55 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,14 @@ void Serveur::cmdQuit(Client &client, const std::vector<std::string> &params)
 
 	oss << client.getPrefix() << " QUIT " << ":" << msg << "\r\n";
 
-	for (std::vector<Client *>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+	const std::set<Channel*>& chans = client.getJoinedChannels();
+	if (!chans.empty())
 	{
-		if ((*it) != &client)
-			TryToSend(**it, oss.str());
+		for (std::set<Channel*>::const_iterator it = chans.begin(); it != chans.end(); ++it)
+		broadcastToChannel(*it, oss.str());
 	}
+	else
+		TryToSend(client, msg);
 
 	removeClient(&client);
 }

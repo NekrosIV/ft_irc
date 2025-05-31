@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/31 02:50:08 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 07:15:29 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,11 +162,11 @@ Client *Serveur::FindClient(const int fd)
 }
 
 void	Serveur::removeClient(Client *client)
-{	
+{
 	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
 	client->close_fd();
 	std::cout << BYELLOW << "Client " << (client->getNickname().empty() ? "*" : client->getNickname()) << " disconnected." << RESET << std::endl;
-	
+
 	for (std::vector<Client*>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
 	{
 		if (*it == client)
@@ -320,16 +320,17 @@ Channel* Serveur::getOrCreateChannel(const std::string& name)
 
 void Serveur::broadcastToChannel(Channel* channel, const std::string& message)
 {
-	int i = 0;
+	// int i = 0;
 	const std::set<Client*>& members = channel->getClients();
 	std::cout << "Client dans le channel: " << channel->getChannelName() << " : " <<  members.size() << std::endl;
 	for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
 	{
-		i++;
-		std::cout << "iterator size: " << i << std::endl; 
+		// i++;
+		// std::cout << "iterator size: " << i << std::endl;
 		TryToSend(**it, message);
 	}
 }
+
 void Serveur::deleteChannel(const std::string& name)
 {
 	std::map<std::string, Channel*>::iterator it = _channels.find(name);
