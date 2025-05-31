@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/30 05:04:31 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 04:06:45 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Serveur
 
 	void cmdNick(Client &client, const std::vector<std::string> &params);
 	void cmdJoin(Client &client, const std::vector<std::string> &params);
+	void joinSingleChannel(Client &client, const std::string &chanName, const std::string &key);
 	void cmdQuit(Client &client, const std::vector<std::string> &params);
 	void cmdUser(Client &client, const std::vector<std::string> &params);
 	void cmdPing(Client &client, const std::vector<std::string> &params);

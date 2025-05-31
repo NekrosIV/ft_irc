@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 23:38:52 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 08:00:24 by pscala           ###   ########.fr       */
+/*   Updated: 2025/05/31 03:57:31 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,3 +24,4 @@ typedef struct s_parsed_command
 
 t_parsed_command parseIrcCommand(const std::string line);
 void CheckSyscall(const int res, const std::string& context);
+std::vector<std::string> splitCommaList(const std::string& input);

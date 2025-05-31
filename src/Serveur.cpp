@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/30 05:08:46 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 02:50:08 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,9 +320,13 @@ Channel* Serveur::getOrCreateChannel(const std::string& name)
 
 void Serveur::broadcastToChannel(Channel* channel, const std::string& message)
 {
+	int i = 0;
 	const std::set<Client*>& members = channel->getClients();
+	std::cout << "Client dans le channel: " << channel->getChannelName() << " : " <<  members.size() << std::endl;
 	for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
 	{
+		i++;
+		std::cout << "iterator size: " << i << std::endl; 
 		TryToSend(**it, message);
 	}
 }

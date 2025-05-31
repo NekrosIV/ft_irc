@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 07:03:29 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/30 04:28:17 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 04:15:43 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,11 @@ bool Channel::isOperator(Client *client) const
 	return(_operators.find(client) != _operators.end());
 }
 
+bool Channel::isInvitedOnly() const
+{
+	return(_isInviteOnly);
+}
+
 bool Channel::isInvited(Client *client) const
 {
 	return(_invitedMembers.find(client) != _invitedMembers.end());
@@ -94,6 +99,11 @@ void Channel::setTopic(const std::string &topic)
 void Channel::setLimit(int limit)
 {
 	_maxMembers = limit;
+}
+
+int Channel::getLimit() const
+{
+	return(_maxMembers);
 }
 
 const std::string &Channel::getTopic() const

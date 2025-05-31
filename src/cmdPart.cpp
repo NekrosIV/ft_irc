@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:05 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/30 03:32:24 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/05/31 05:11:13 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void Serveur::cmdPart(Client &client, const std::vector<std::string>& params)
 	if(params.empty())
 	{
 		sendError(client, 461, "PART", "Not enough parameters");
+		return;
 	}
 	std::vector<std::string> channelNames = splitCommaList(params[0]);
 	std::string partMessage = client.getNickname();
