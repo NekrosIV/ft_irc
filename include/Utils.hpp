@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.hpp                                         :+:      :+:    :+:   */
+/*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/25 17:49:36 by kasingh          ###   ########.fr       */
+/*   Created: 2025/05/27 23:38:52 by pscala            #+#    #+#             */
+/*   Updated: 2025/05/31 03:57:31 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #pragma once
 
-#include "Serveur.hpp"
+#include "color.hpp"
 
-class	Serveur;
-
-class Client
+typedef struct s_parsed_command
 {
-  private:
-	int _fd;
+	std::string prefix;
+	std::string command;
+	std::vector<std::string> params;
+}	t_parsed_command;
 
-  public:
-	Client(int fd);
-	void close_fd() const;
-};
+t_parsed_command parseIrcCommand(const std::string line);
+void CheckSyscall(const int res, const std::string& context);
+std::vector<std::string> splitCommaList(const std::string& input);

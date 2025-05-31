@@ -1,14 +1,31 @@
 NAME :=  ircserv
 CC := g++
-CFLAGS :=  -Wall -Wextra -Werror -std=c++98
+CFLAGS :=  #-Wall -Wextra -Werror -std=c++98
 
 SRCS_DIR := ./src
 OBJS_DIR := ./objs
 
 HEADERS := ./include
 FILES := main.cpp \
-			Serveur.cpp Client.cpp
-			
+			Serveur.cpp \
+			Client.cpp \
+			Channel.cpp \
+			Utils.cpp \
+			cmdError.cpp \
+			cmdInvite.cpp \
+    		cmdJoin.cpp \
+    		cmdKick.cpp \
+    		cmdMode.cpp \
+    		cmdNick.cpp \
+    		cmdNotice.cpp \
+    		cmdPart.cpp \
+			cmdPass.cpp \
+    		cmdPing.cpp \
+    		cmdPrivmsg.cpp \
+    		cmdQuit.cpp \
+    		cmdTopic.cpp \
+    		cmdUser.cpp
+
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(FILES))
 OBJS := $(addprefix $(OBJS_DIR)/, $(FILES:.cpp=.o))
@@ -71,7 +88,7 @@ $(NAME): $(OBJS)
 	@printf "⠀⠀$(GREEN)⠀⠀⠐⡂⠄⣀⢆⣭⣿⣤⣤⠃⠆⠀$(PINK)⠠⣾⣿⣆⡄⢀⡶⠁⠀⡀⠀⠀⠆⠉⠐$(BLUE)⠀⠀⡠⠄⡀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣏⠼⠢⠻⣧⡁$(PURPLE)⠀⠈⢻⡕⣽⢯⠿⣉⢁⣽⣿⠿⠋$(GREEN)⣠⣷⣿⣿⢟⣵⠿⢋⠡⢀⢐⣠⡆⠀⠀⠀⠃⠁⠂⢀$(GOLD)⠘⠃⠒⠈⢩⠀$(DARK_BLUE)⣚⡍⢛⣭⢡⢪⢋⡟⠙⠒⠃⠛⠈⠁⢀⡤⠄⠒⠀$(GOLD)⢸⠁⠀⠀⠀⠀⠀⠀⠀\n"
 	@printf "⠀⠀$(GREEN)⠀⢠⡾⢋⠾⢡⠀⡿⡟⠺⢶⣅⠐⠄$(PINK)⠑⢻⡿⠚⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀$(BLUE)⠀⠀⢴⡀⠈⠲⣙⠻⢿⣿⣿⣿⣿⣿⣿⢦⣴⡤⠀$(PURPLE)⠀⠀⠀⠀⠈⣿⠠⠒⢢⡴⢶⠞$(GREEN)⢄⡖⣿⣿⢟⢱⡟⢁⠒⠌⣀⡾⠛⠿⡦⢄⠀⠀⠩⠦⢤⠉$(GOLD)⠠⡀⠀⠀⢸⠄$(DARK_BLUE)⠡⠠⠏⠹⠂⠀⠈⣀⠤⠠⠤⠀⠀⠀⠀⠃⠀⠀⠀$(GOLD)⢸⠀⠀⠀⠀⠀⠀⠀⠀\n"
 	@printf "⠀⠀⠀$(GREEN)⠃⠁⠈⠘⠀⠀⠁⠁⠀⠀⠈⠁⠁⠀$(PINK)⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(BLUE)⠀⠀⠈⠀⠀⠀⠀⠀⠀⠉⠛⠙⠋⠉⠐⠉⠁⠀$(PURPLE)⠀⠀⠀⠀⠀⠂⠘⠀⠐⠈⠉⠃⠀$(GREEN)⠚⠉⠛⠁⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(DARK_BLUE)⠚⠁⠀⠁⠀⠀⠀⠀⠀⠀$(GOLD)⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀$(RESET)\n"
-	
+
 
 -include $(DEPS)
 
@@ -81,7 +98,7 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.cpp
 	$(CC) $(CFLAGS) -I$(HEADERS) -c $< -o $@ && \
 	printf "\r$(LBLUE)[Compilation]$(RESET) Completed   ... $(GREEN)$<" && \
 	printf " $(LBLUE)[$(RESET)$(CC)$(LBLUE)/]$(RESET)\n"
-	
+
 
 clean:
 	rm -rf $(OBJS_DIR)
