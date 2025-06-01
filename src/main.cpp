@@ -3,15 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:18:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/26 06:25:47 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 00:25:09 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serveur.hpp"
 
+bool	run = true;
+
+void	handle_quit(int sig)
+{
+	(void)sig;
+	run = false;
+}
 
 int	main(int ac, char **av)
 {
@@ -31,6 +38,7 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	std::string password = av[2];
+	signal(SIGINT, handle_quit);
 	try
 	{
 		Serveur myServ(port, password);

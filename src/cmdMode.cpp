@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:55 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/01 03:52:37 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 00:27:34 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,30 @@ void Serveur::cmdMode(Client &client, const std::vector<std::string> &params)
 	channel = getChannel(channelName);
 	if (params.size() == 1)
 	{
-		// send les mod sur le channel
+		std::ostringstream msg;
+		msg << ":" << _servername << 324 << client.getNickname() << " "
+			<< channelName << " +";
+		
+		std::string args;
+		if(channel->isInvitedOnly())
+			msg << "i";
+		if(channel->isTopicRestricted())
+			msg << "t";
+		if(channel->isRequirePass())
+		{
+			msg << "k";
+			// args += " " + channel->getPassword();
+			args += " <key>";
+		}
+		if(channel->getLimit() > 0)
+		{
+			msg << "l";
+			std::ostringstream limitStr;
+			limitStr << " " << channel->getLimit();
+			args += limitStr.str();
+		}
+		msg << args << "\r\n";
+		TryToSend(client, msg.str());
 		return ;
 	}
 	if (!channel->isOperator(&client))

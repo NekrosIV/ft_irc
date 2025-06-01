@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   cmdQuit.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:13 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 06:14:55 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 00:38:20 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serveur.hpp"
+#include "Channel.hpp"
 #include "Client.hpp"
 
 void Serveur::cmdQuit(Client &client, const std::vector<std::string> &params)
@@ -30,10 +31,17 @@ void Serveur::cmdQuit(Client &client, const std::vector<std::string> &params)
 	if (!chans.empty())
 	{
 		for (std::set<Channel*>::const_iterator it = chans.begin(); it != chans.end(); ++it)
-		broadcastToChannel(*it, oss.str());
+		{
+			broadcastToChannel(*it, oss.str());
+			(*it)->RemoveClient(&client);
+			client.leaveChannel(*it);
+		}
 	}
-	else
-		TryToSend(client, msg);
+	
+	std::ostringstream errorMsg;
+	errorMsg << "ERROR :Closing Link: " << client.getNickname() << "(" << msg << ")\r\n";
+	
+	TryToSend(client, errorMsg.str());
 
 	removeClient(&client);
 }

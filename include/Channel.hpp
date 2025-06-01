@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 04:34:17 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/01 03:02:25 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 00:28:29 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Channel
 	bool isInvited(Client *client) const;
 	bool isInvitedOnly() const;
 	bool isTopicRestricted() const;
+	bool isRequirePass() const;
 	bool isBanned(Client *client) const;
 	void setPassword(const std::string &pass);
 	void setLimit(int limit);

@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 07:03:29 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/01 03:02:34 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 00:27:55 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,11 @@ bool Channel::isOperator(Client *client) const
 bool Channel::isInvitedOnly() const
 {
 	return (_isInviteOnly);
+}
+
+bool Channel::isRequirePass() const
+{
+	return (_requierPass);
 }
 
 bool Channel::isTopicRestricted() const

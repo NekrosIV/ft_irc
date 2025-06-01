@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:10 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/30 05:36:55 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 00:42:05 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ Client *Serveur::FindClient(const std::string &name)
 
 bool Serveur::channelExists(const std::string& name) const
 {
+	if (name.empty())
+		return false;
 	return (_channels.find(name) != _channels.end());
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:49 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 06:21:20 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 00:40:25 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,12 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 	if(chan->isInvitedOnly() && !chan->isInvited(&client))
 	{
 		sendError(client, 473, chanName, "Cannot join channel (+i)");
+		return;
+	}
+
+	if(chan->isRequirePass() && chan->getPassword() != key)
+	{
+		sendError(client, 475, chanName, "Cannot join channel (+k)");
 		return;
 	}
 

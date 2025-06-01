@@ -29,6 +29,7 @@
 #include <unistd.h>     // close()
 #include <vector>
 #include <map>
+#include <csignal>
 
 // Reset
 #define RESET "\033[0m"
