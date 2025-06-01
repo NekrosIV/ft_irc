@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/31 07:30:36 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/01 06:14:38 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,7 @@ class Serveur
 	void cmdInvite(Client &client, const std::vector<std::string> &params);
 	void cmdNotice(Client &client, const std::vector<std::string> &params);
 	void cmdPrivmsg(Client &client, const std::vector<std::string> &params);
-	bool testKick(Client &client, Client &target, Channel *channel);
 	void kickClient(Client &client, Channel *channel);
-	bool testInvite(Client &client, Client &target, Channel *channel);
 
 
 

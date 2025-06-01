@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdInvite.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:46 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 07:43:58 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/01 06:17:50 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,6 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 
-bool	Serveur::testInvite(Client &client, Client &target, Channel *channel)
-{
-	if (!channel->isMember(&client))
-	{
-		sendError(client, 442, channel->getChannelName(), "You're not on that channel");
-   		return false;
-	}
-
-	if (channel->isInvitedOnly() && !channel->isOperator(&client))
-	{
-		sendError(client, 482, channel->getChannelName(), "You're not channel operator");
-   		return false;
-	}
-
-	if (&client == &target)
-		return false;
-
-	if (channel->isMember(&target))
-	{
-		sendError(client, 443,  client.getNickname() + " " + channel->getChannelName() , "is already on channel");
-   		return false;
-	}
-
-	return true;
-}
 
 void Serveur::cmdInvite(Client &client, const std::vector<std::string> &params)
 {
@@ -48,52 +23,48 @@ void Serveur::cmdInvite(Client &client, const std::vector<std::string> &params)
 		return;
 	}
 
-	std::vector<std::string>  chanNames = splitCommaList(params[0]);
-	std::vector<std::string>  clientNames = splitCommaList(params[1]);
+	const std::string &targetNick = params[0];
+	const std::string &channelName = params[1];
 
-	if (chanNames.size() > clientNames.size())
+	Client *target = FindClient(targetNick);
+	if(!target)
 	{
-		sendError(client, 461, "INVITE", "Not enough parameters");
+		sendError(client, 401, "INVITE", "No Such nick");
 		return;
 	}
-
-	for (size_t i = 0; i < chanNames.size(); ++i)
+	
+	Channel *channel = getChannel(channelName);
+	
+	if(channel)
 	{
-		std::string chanName = chanNames[i];
-		std::string targetName;
-
-		if (clientNames.size() == 1)
-			targetName = clientNames[0];
-		else
-			targetName = clientNames[i];
-
-
-		Channel *channel = getChannel(chanName);
-		if (!channel)
+		if (!channel->isMember(&client))
 		{
-			sendError(client, 403, chanName, "No such channel");
-			continue;
+			sendError(client, 442, channel->getChannelName(), "You're not on that channel");
+   			return;
 		}
-
-		Client *target = FindClient(targetName);
-		if (!target)
+		if (channel->isInvitedOnly() && !channel->isOperator(&client))
 		{
-			sendError(client, 401, targetName, "No such nick");
-			continue;
+			sendError(client, 482, channel->getChannelName(), "You're not channel operator");
+   			return;
 		}
-
-		if (!testInvite(client, *target, channel))
-			continue;
-
-		std::ostringstream oss;
-		oss << client.getPrefix() << " INVITE " << targetName << " :" << chanName << "\r\n";
-		TryToSend(*target, oss.str());
-
+		if (target == &client)
+			return;
+		if (channel->isMember(target))
+		{
+			sendError(client, 443,  targetNick, channelName + " + is already on channel");
+   			return;
+		}
 		channel->invite(target);
-
-		std::ostringstream reply;
-		reply << ":irc.42.fr 341 " << client.getNickname() << " "
-      	<< target->getNickname() << " " << channel->getChannelName() << "\r\n";
-		TryToSend(client, reply.str());
 	}
+	
+	std::ostringstream reply;
+	reply << ":" << _servername << " 341 " << client.getNickname()
+	      << " " << targetNick << " " << channelName << "\r\n";
+	TryToSend(client, reply.str());
+
+	std::ostringstream inviteMsg;
+	inviteMsg << ":" << client.getPrefix() << " INVITE " << targetNick
+	          << " :" << channelName << "\r\n";
+	TryToSend(*target, inviteMsg.str());
+	
 }
