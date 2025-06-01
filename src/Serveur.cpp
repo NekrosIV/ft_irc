@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/31 07:15:29 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 01:14:57 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,27 +103,12 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 {
 	Client *client = FindClient(ev.data.fd);
 	if (!client)
-	{
-		std::cerr << "recieved event for unknown fd : " << ev.data.fd << std::endl;
-    	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, ev.data.fd, NULL), "epoll_ctl_DEL()");
-    	close(ev.data.fd);
-   		return;
-	}
+		return;
 
-	if (ev.events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
+	if (ev.events & (EPOLLHUP | EPOLLERR | EPOLLRDHUP))
 	{
 		removeClient(client);
-		return;
-	}
-
-	if (ev.events & EPOLLOUT)
-	{
-		int n = TryToSend(*client, client->getWriteBuffer());
-		if(n == client->getWriteBuffer().length())
-		{
-			client->FillWriteBuffer("");
-			disableWriteEvent(*client);
-		}
+		return; // 🔴 obligatoire
 	}
 
 	if (ev.events & EPOLLIN)
@@ -133,25 +118,37 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 		if (n <= 0)
 		{
 			removeClient(client);
-			return;
+			return; // 🔴 obligatoire
 		}
-		try
-		{
+
+		try {
 			client->FillReadBuffer(std::string(buffer, n));
 		}
-		catch (const std::exception& e)
-		{
-			std::cerr << "Client buffer " << client->getFd() << " overflow: " << e.what() << std::endl;
+		catch (...) {
 			removeClient(client);
-			return;
+			return; // 🔴 obligatoire
 		}
+
 		std::string line;
-		while (client->getCmdNextLine(line))
+		while (client->getCmdNextLine(line)) // ⛔ ici : invalid read si client déjà supprimé
 		{
 			handleClientCommand(*client, line);
+			if (!FindClient(ev.data.fd))
+				return;
+		}
+	}
+
+	if (ev.events & EPOLLOUT)
+	{
+		int n = TryToSend(*client, client->getWriteBuffer());
+		if (n == static_cast<int>(client->getWriteBuffer().length()))
+		{
+			client->FillWriteBuffer("");
+			disableWriteEvent(*client);
 		}
 	}
 }
+
 
 Client *Serveur::FindClient(const int fd)
 {
@@ -161,22 +158,7 @@ Client *Serveur::FindClient(const int fd)
 	return NULL;
 }
 
-void	Serveur::removeClient(Client *client)
-{
-	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
-	client->close_fd();
-	std::cout << BYELLOW << "Client " << (client->getNickname().empty() ? "*" : client->getNickname()) << " disconnected." << RESET << std::endl;
 
-	for (std::vector<Client*>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
-	{
-		if (*it == client)
-		{
-			delete *it;
-			_clients_vec.erase(it);
-			break;
-		}
-	}
-}
 
 
 void	Serveur::handleClientCommand(Client &client, std::string line)
@@ -328,6 +310,40 @@ void Serveur::broadcastToChannel(Channel* channel, const std::string& message)
 		// i++;
 		// std::cout << "iterator size: " << i << std::endl;
 		TryToSend(**it, message);
+	}
+}
+
+void	Serveur::removeClient(Client *client)
+{
+	CheckSyscall(epoll_ctl(_epollfd, EPOLL_CTL_DEL, client->getFd(), NULL), "epoll_ctl()");
+	client->close_fd();
+	std::cout << BYELLOW << "Client " << (client->getNickname().empty() ? "*" : client->getNickname()) << " disconnected." << RESET << std::endl;
+
+	disconnectClient(client);
+}
+
+void Serveur::disconnectClient(Client* client)
+{
+	std::set<Channel*> chans = client->getJoinedChannels(); // copie la set
+
+	for (std::set<Channel*>::iterator it = chans.begin(); it != chans.end(); ++it)
+	{
+	    Channel* chan = *it;
+	
+	    chan->RemoveClient(client);         // retire du Channel
+	    client->leaveChannel(chan);         // retire du Client
+	
+	    if (chan->getClients().empty())     // optionnel : supprimer le channel vide
+	        deleteChannel(chan->getChannelName());
+	}
+	for (std::vector<Client*>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
+	{
+		if (*it == client)
+		{
+			delete *it;
+			_clients_vec.erase(it);
+			break;
+		}
 	}
 }
 

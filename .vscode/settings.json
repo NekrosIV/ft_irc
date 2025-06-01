@@ -49,6 +49,7 @@
         "typeinfo": "cpp",
         "set": "cpp",
         "sstream": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "csignal": "cpp"
     }
 }

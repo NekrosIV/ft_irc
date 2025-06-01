@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:13 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 00:38:20 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 01:00:47 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,18 @@ void Serveur::cmdQuit(Client &client, const std::vector<std::string> &params)
 
 	oss << client.getPrefix() << " QUIT " << ":" << msg << "\r\n";
 
-	const std::set<Channel*>& chans = client.getJoinedChannels();
+	std::set<Channel*> chans = client.getJoinedChannels();
 	if (!chans.empty())
 	{
 		for (std::set<Channel*>::const_iterator it = chans.begin(); it != chans.end(); ++it)
 		{
-			broadcastToChannel(*it, oss.str());
-			(*it)->RemoveClient(&client);
-			client.leaveChannel(*it);
+			Channel* chan = *it;
+			broadcastToChannel(chan, oss.str());
+			chan->RemoveClient(&client);
+			client.leaveChannel(chan);
+		
+			if (chan->getClients().empty())
+				deleteChannel(chan->getChannelName());
 		}
 	}
 	

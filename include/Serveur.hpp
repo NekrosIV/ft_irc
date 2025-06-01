@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/01 06:14:38 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 00:52:47 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ class Serveur
 	Channel *getOrCreateChannel(const std::string &name);
 	void broadcastToChannel(Channel *channel, const std::string &message);
 	bool channelExists(const std::string &name) const;
+	void disconnectClient(Client* client);
 	void deleteChannel(const std::string &name);
 
 	void cmdNick(Client &client, const std::vector<std::string> &params);
