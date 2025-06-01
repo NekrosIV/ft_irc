@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 07:03:29 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 07:50:46 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/01 03:02:34 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,10 @@ Channel::Channel(const std::string name)
 	_topic = "";
 	_password = "";
 	_maxMembers = -1;
-	_isPrivate = false;
+	_isTopicRestricted = false;
 	_isSecret = false;
 	_requierPass = false;
 	_isInviteOnly = false;
-
 }
 
 Channel::~Channel()
@@ -48,27 +47,32 @@ void Channel::RemoveOperator(Client *op)
 
 bool Channel::isMember(Client *client) const
 {
-	return(_members.find(client) != _members.end());
+	return (_members.find(client) != _members.end());
 }
 
 bool Channel::isOperator(Client *client) const
 {
-	return(_operators.find(client) != _operators.end());
+	return (_operators.find(client) != _operators.end());
 }
 
 bool Channel::isInvitedOnly() const
 {
-	return(_isInviteOnly);
+	return (_isInviteOnly);
+}
+
+bool Channel::isTopicRestricted() const
+{
+	return (_isTopicRestricted);
 }
 
 bool Channel::isInvited(Client *client) const
 {
-	return(_invitedMembers.find(client) != _invitedMembers.end());
+	return (_invitedMembers.find(client) != _invitedMembers.end());
 }
 
 bool Channel::isBanned(Client *client) const
 {
-	return(_bannedMembers.find(client) != _bannedMembers.end());
+	return (_bannedMembers.find(client) != _bannedMembers.end());
 }
 
 void Channel::addOperator(Client *client)
@@ -79,7 +83,7 @@ void Channel::addOperator(Client *client)
 void Channel::invite(Client *client)
 {
 	if (this->isInvited(client))
-		return;
+		return ;
 	_invitedMembers.insert(client);
 }
 
@@ -102,9 +106,24 @@ void Channel::setLimit(int limit)
 	_maxMembers = limit;
 }
 
+void Channel::setInviteOnly(bool flag)
+{
+	_isInviteOnly = flag;
+}
+
+void Channel::setTopicRestricted(bool flag)
+{
+	_isTopicRestricted = flag;
+}
+
 int Channel::getLimit() const
 {
-	return(_maxMembers);
+	return (_maxMembers);
+}
+
+const std::string &Channel::getPassword() const
+{
+	return (_password);
 }
 
 const std::string &Channel::getTopic() const

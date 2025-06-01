@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 04:34:17 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 04:14:59 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/01 03:02:25 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Channel
 
 	int _maxMembers;
 
-	bool _isPrivate;
+	bool _isTopicRestricted;
 	bool _isSecret;
 	bool _requierPass;
 	bool _isInviteOnly;
@@ -48,11 +48,15 @@ class Channel
 	bool isOperator(Client *client) const;
 	bool isInvited(Client *client) const;
 	bool isInvitedOnly() const;
+	bool isTopicRestricted() const;
 	bool isBanned(Client *client) const;
 	void setPassword(const std::string &pass);
 	void setLimit(int limit);
 	void setTopic(const std::string &topic);
+	void setInviteOnly(bool flag);
+	void setTopicRestricted(bool flag);
 	int getLimit() const;
+	const std::string &getPassword() const;
 	const std::string &getTopic() const; 
 	const std::string &getChannelName() const;
 	const std::set<Client *> &getClients() const;
