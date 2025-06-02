@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 23:38:39 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/28 08:00:07 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 02:09:47 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void CheckSyscall(const int res, const std::string& context)
 {
     if (res < 0)
     {
-        std::string err = context + ": " + std::strerror(errno);
+        std::string err = "\n" + context + ": " + std::strerror(errno);
         throw std::runtime_error(err);
     }
 }
