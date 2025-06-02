@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:18:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 00:25:09 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 01:52:18 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	main(int ac, char **av)
 	catch (const std::exception &e)
 	{
 		std::cerr << BRED << e.what() << '\n';
-		//ajoutez un cleanup en cas d exception arrivant apres l ouverture de fd etc etc
 		return (1);
 	}
 	return (0);

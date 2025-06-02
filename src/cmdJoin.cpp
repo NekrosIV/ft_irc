@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:49 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 00:40:25 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 01:52:42 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 
 	chan->AddClient(&client);
 	client.joinChannel(chan);
-	// chan->removeInvitation(&client);
 
 	if (chan->getClients().size() == 1)
 		chan->addOperator(&client);

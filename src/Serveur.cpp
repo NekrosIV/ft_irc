@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 01:14:57 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 02:03:46 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,16 @@ Serveur::Serveur(int port, std::string &password)
 	_commands["INVITE"] = &Serveur::cmdInvite;
 	_commands["TOPIC"] = &Serveur::cmdTopic;
 	_commands["MODE"] = &Serveur::cmdMode;
+
+	std::cout << BBLUE
+          << "==============================================================\n"
+         << BWHITE << "✅  IRC Server started successfully!\n"
+          << "🌐  Listening on port " << _port << "\n"
+          << "👥  Waiting for clients to connect...\n"
+          << "🛠️   Supported commands: " << BCYAN << "PASS, NICK, USER, JOIN, PART, PRIVMSG,\n"
+          << "     NOTICE, QUIT, KICK, INVITE, TOPIC, MODE\n"
+          << BBLUE << "==============================================================\n"
+          << RESET;
 }
 
 Serveur::~Serveur()
@@ -74,7 +84,6 @@ void Serveur::start()
 void Serveur::run()
 {
 	int client_fd;
-	// std::cout << BGREEN << "Server is waiting..." << RESET << std::endl;
 	int nfds = epoll_wait(_epollfd, _events, MAXEVENTS, -1);
 	CheckSyscall(nfds, "epoll_wait()");
 	for (int i = 0; i < nfds; ++i)
@@ -94,7 +103,7 @@ void Serveur::run()
 		}
 		else
 		{
-			handleClientEvents(_events[i]); //pas fini donc pas encore test
+			handleClientEvents(_events[i]);
 		}
 	}
 }
@@ -108,7 +117,7 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 	if (ev.events & (EPOLLHUP | EPOLLERR | EPOLLRDHUP))
 	{
 		removeClient(client);
-		return; // 🔴 obligatoire
+		return;
 	}
 
 	if (ev.events & EPOLLIN)
@@ -118,7 +127,7 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 		if (n <= 0)
 		{
 			removeClient(client);
-			return; // 🔴 obligatoire
+			return;
 		}
 
 		try {
@@ -126,11 +135,11 @@ void Serveur::handleClientEvents(const struct epoll_event& ev)
 		}
 		catch (...) {
 			removeClient(client);
-			return; // 🔴 obligatoire
+			return;
 		}
 
 		std::string line;
-		while (client->getCmdNextLine(line)) // ⛔ ici : invalid read si client déjà supprimé
+		while (client->getCmdNextLine(line))
 		{
 			handleClientCommand(*client, line);
 			if (!FindClient(ev.data.fd))
@@ -302,15 +311,10 @@ Channel* Serveur::getOrCreateChannel(const std::string& name)
 
 void Serveur::broadcastToChannel(Channel* channel, const std::string& message)
 {
-	// int i = 0;
 	const std::set<Client*>& members = channel->getClients();
 	std::cout << "Client dans le channel: " << channel->getChannelName() << " : " <<  members.size() << std::endl;
 	for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
-	{
-		// i++;
-		// std::cout << "iterator size: " << i << std::endl;
 		TryToSend(**it, message);
-	}
 }
 
 void	Serveur::removeClient(Client *client)
@@ -324,16 +328,16 @@ void	Serveur::removeClient(Client *client)
 
 void Serveur::disconnectClient(Client* client)
 {
-	std::set<Channel*> chans = client->getJoinedChannels(); // copie la set
+	std::set<Channel*> chans = client->getJoinedChannels();
 
 	for (std::set<Channel*>::iterator it = chans.begin(); it != chans.end(); ++it)
 	{
 	    Channel* chan = *it;
-	
-	    chan->RemoveClient(client);         // retire du Channel
-	    client->leaveChannel(chan);         // retire du Client
-	
-	    if (chan->getClients().empty())     // optionnel : supprimer le channel vide
+
+	    chan->RemoveClient(client);
+	    client->leaveChannel(chan);
+
+	    if (chan->getClients().empty())
 	        deleteChannel(chan->getChannelName());
 	}
 	for (std::vector<Client*>::iterator it = _clients_vec.begin(); it != _clients_vec.end(); ++it)
