@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Serveur.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 05:07:00 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 05:57:07 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,12 @@ void Serveur::run()
 {
 	int client_fd;
 	int nfds = epoll_wait(_epollfd, _events, MAXEVENTS, -1);
-	CheckSyscall(nfds, "epoll_wait()");
-
+	if (nfds == -1)
+	{
+		if (errno != EINTR)
+			CheckSyscall(nfds, "epoll_wait()");
+		return;
+	}
 	for (int i = 0; i < nfds; ++i)
 	{
 		if (_events[i].data.fd == _server_fd)

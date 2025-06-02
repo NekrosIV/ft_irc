@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:18:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 04:55:22 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 05:58:43 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,12 @@ int	main(int ac, char **av)
           << BBLUE << "=============================================================="
           << RESET << std::endl;
 
-		while (true)
-		{
-
-			myServ.run();
-		}
+		while (run)
+			myServ.run();	
 	}
 	catch (const std::exception &e)
 	{
-		std::cerr << BRED << e.what() << '\n';
+		std::cerr << BRED << e.what() << RESET << '\n';
 		return (1);
 	}
 	return (0);
