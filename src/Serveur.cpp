@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 04:22:10 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 04:55:05 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,6 @@ Serveur::Serveur(int port, std::string &password)
 	_commands["INVITE"] = &Serveur::cmdInvite;
 	_commands["TOPIC"] = &Serveur::cmdTopic;
 	_commands["MODE"] = &Serveur::cmdMode;
-
-	std::cout << BBLUE
-          << "==============================================================\n"
-         << BWHITE << "✅  IRC Server started successfully!\n"
-          << "🌐  Listening on port " << _port << "\n"
-          << "👥  Waiting for clients to connect...\n"
-          << "🛠️   Supported commands: " << BCYAN << "PASS, NICK, USER, JOIN, PART, PRIVMSG,\n"
-          << "     NOTICE, QUIT, KICK, INVITE, TOPIC, MODE\n"
-          << BBLUE << "=============================================================="
-          << RESET << std::endl;
 }
 
 Serveur::~Serveur()
@@ -86,6 +76,7 @@ void Serveur::run()
 	int client_fd;
 	int nfds = epoll_wait(_epollfd, _events, MAXEVENTS, -1);
 	CheckSyscall(nfds, "epoll_wait()");
+
 	for (int i = 0; i < nfds; ++i)
 	{
 		if (_events[i].data.fd == _server_fd)

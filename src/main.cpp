@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:18:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 01:52:18 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 04:55:22 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,20 @@ int	main(int ac, char **av)
 	{
 		Serveur myServ(port, password);
 		myServ.start();
+
+		std::cout << BBLUE
+          << "==============================================================\n"
+         << BWHITE << "✅  IRC Server started successfully!\n"
+          << "🌐  Listening on port " << port << "\n"
+          << "👥  Waiting for clients to connect...\n"
+          << "🛠️   Supported commands: " << BCYAN << "PASS, NICK, USER, JOIN, PART, PRIVMSG,\n"
+          << "     NOTICE, QUIT, KICK, INVITE, TOPIC, MODE\n"
+          << BBLUE << "=============================================================="
+          << RESET << std::endl;
+
 		while (true)
 		{
+
 			myServ.run();
 		}
 	}
