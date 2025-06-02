@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdNick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:58 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/30 05:37:52 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:41:59 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ bool	isValidNickname(std::string name)
 
 void Serveur::cmdNick(Client &client, const std::vector<std::string>& params)
 {
+
 	if (params.size() < 1)
 	{
 		sendError(client, 431, "NICK", "No nickname given");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPrivmsg.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:10 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 00:42:05 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:44:02 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,16 @@ void Serveur::cmdPrivmsg(Client &client, const std::vector<std::string>& params)
 {
 	if (!client.isRegistered())
     {
-        sendError(client, 462, "PRIVMSG", "You may not reregister");
+        sendError(client, 451, "PRIVMSG", "You have not registered");
         return;
     }
+
 	if (params.size() == 0 || params[0].empty())
 	{
 		sendError(client, 411, "PRIVMSG", "No recipient given");
 		return;
 	}
-	
+
 	if (params.size() < 2)
 	{
 		sendError(client, 461, "PRIVMSG", "Not enough parameters");
@@ -66,10 +67,10 @@ void Serveur::cmdPrivmsg(Client &client, const std::vector<std::string>& params)
 			sendError(client, 442, params[0], "You're not on that channel");
 			return;
 		}
-	
+
 		std::ostringstream oss;
 		oss << ":" << client.getPrefix() << " PRIVMSG " << targetChannel->getChannelName() << " :" << message << "\r\n";
-	
+
 		const std::set<Client*>& members = targetChannel->getClients();
 		for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
 		{

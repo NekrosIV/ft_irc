@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPass.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 02:58:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/30 01:22:11 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:41:51 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 void Serveur::cmdPass(Client &client, const std::vector<std::string> &params)
 {
+
 	if (params.empty())
 	{
 		sendError(client, 461, "PASS", "Not enough parameters");

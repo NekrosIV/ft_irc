@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPart.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:05 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 05:11:13 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:40:47 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,12 @@ std::vector<std::string> splitCommaList(const std::string& input)
 
 void Serveur::cmdPart(Client &client, const std::vector<std::string>& params)
 {
+	if (!client.isRegistered())
+	{
+		sendError(client, 451, " PART ", "You have not registered");
+		return;
+	}
+
 	if(params.empty())
 	{
 		sendError(client, 461, "PART", "Not enough parameters");
@@ -64,6 +70,6 @@ void Serveur::cmdPart(Client &client, const std::vector<std::string>& params)
 		if (chan->getClients().empty())
 			deleteChannel(chanName);
 	}
-	
-	
+
+
 }

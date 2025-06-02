@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdKick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:53 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/01 06:20:25 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:41:13 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ void	Serveur::kickClient(Client &client, Channel *channel)
 
 void Serveur::cmdKick(Client &client, const std::vector<std::string> &params)
 {
+	if (!client.isRegistered())
+	{
+		sendError(client, 451, " KICK ", "You have not registered");
+		return;
+	}
+
 	if (params.size() < 2)
 	{
 		sendError(client, 461, "KICK", "Not enough parameters");
@@ -40,7 +46,7 @@ void Serveur::cmdKick(Client &client, const std::vector<std::string> &params)
 
 	for (size_t i = 0; i < chanNames.size(); ++i)
 	{
-		std::string chanName = (chanNames.size() == 1) ? chanNames[0] : chanNames[i]; 
+		std::string chanName = (chanNames.size() == 1) ? chanNames[0] : chanNames[i];
 		std::string clientName = clientNames[i];
 
 
@@ -56,7 +62,7 @@ void Serveur::cmdKick(Client &client, const std::vector<std::string> &params)
 			sendError(client, 442, chanName, "You're not on that channel");
    			continue;
 		}
-	
+
 		if (!channel->isOperator(&client))
 		{
 			sendError(client, 482, chanName, "You're not channel operator");
@@ -80,7 +86,7 @@ void Serveur::cmdKick(Client &client, const std::vector<std::string> &params)
 		}
 
 		std::ostringstream msg;
-		msg << client.getPrefix() << " KICK " << chanName << " " << clientName 
+		msg << client.getPrefix() << " KICK " << chanName << " " << clientName
 			 << " :" << comment << "\r\n";
 		broadcastToChannel(channel, msg.str());
 

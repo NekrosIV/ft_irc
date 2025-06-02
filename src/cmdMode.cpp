@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdMode.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:55 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 00:27:34 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:41:03 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@ void Serveur::cmdMode(Client &client, const std::vector<std::string> &params)
 	bool	adding;
 	size_t	paramIndex;
 	char	mode;
+
+	if (!client.isRegistered())
+	{
+		sendError(client, 451, " MODE ", "You have not registered");
+		return;
+	}
 
 	if (params.empty())
 	{
@@ -38,7 +44,7 @@ void Serveur::cmdMode(Client &client, const std::vector<std::string> &params)
 		std::ostringstream msg;
 		msg << ":" << _servername << 324 << client.getNickname() << " "
 			<< channelName << " +";
-		
+
 		std::string args;
 		if(channel->isInvitedOnly())
 			msg << "i";

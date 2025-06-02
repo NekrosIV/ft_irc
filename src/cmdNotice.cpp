@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdNotice.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:01 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/31 04:37:17 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:40:42 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
 
 void Serveur::cmdNotice(Client &client, const std::vector<std::string>& params)
 {
+	if (!client.isRegistered())
+	{
+		sendError(client, 451, " NOTICE ", "You have not registered");
+		return;
+	}
+
 	if (params.size() < 2)
         return;
 
@@ -32,10 +38,10 @@ void Serveur::cmdNotice(Client &client, const std::vector<std::string>& params)
 	{
 		if (!targetChannel->isMember(&client))
 			return;
-	
+
 		std::ostringstream oss;
 		oss << ":" << client.getPrefix() << " PRIVMSG " << targetChannel->getChannelName() << " :" << message << "\r\n";
-	
+
 		const std::set<Client*>& members = targetChannel->getClients();
 		for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
 		{

@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:49 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 01:52:42 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 03:41:19 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,12 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 
 void Serveur::cmdJoin(Client &client, const std::vector<std::string> &params)
 {
+	if (!client.isRegistered())
+	{
+		sendError(client, 451, " JOIN ", "You have not registered");
+		return;
+	}
+
 	if(params.empty())
 	{
 		sendError(client, 461, "JOIN", "Not enough parameters");

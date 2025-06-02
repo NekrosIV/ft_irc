@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdInvite.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:46 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/01 06:17:50 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 03:41:28 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@
 
 void Serveur::cmdInvite(Client &client, const std::vector<std::string> &params)
 {
+	if (!client.isRegistered())
+	{
+		sendError(client, 451, " INVITE ", "You have not registered");
+		return;
+	}
+
 	if (params.size() < 2)
 	{
 		sendError(client, 461, "INVITE", "Not enough parameters");
@@ -32,9 +38,9 @@ void Serveur::cmdInvite(Client &client, const std::vector<std::string> &params)
 		sendError(client, 401, "INVITE", "No Such nick");
 		return;
 	}
-	
+
 	Channel *channel = getChannel(channelName);
-	
+
 	if(channel)
 	{
 		if (!channel->isMember(&client))
@@ -56,7 +62,7 @@ void Serveur::cmdInvite(Client &client, const std::vector<std::string> &params)
 		}
 		channel->invite(target);
 	}
-	
+
 	std::ostringstream reply;
 	reply << ":" << _servername << " 341 " << client.getNickname()
 	      << " " << targetNick << " " << channelName << "\r\n";
@@ -66,5 +72,5 @@ void Serveur::cmdInvite(Client &client, const std::vector<std::string> &params)
 	inviteMsg << ":" << client.getPrefix() << " INVITE " << targetNick
 	          << " :" << channelName << "\r\n";
 	TryToSend(*target, inviteMsg.str());
-	
+
 }
