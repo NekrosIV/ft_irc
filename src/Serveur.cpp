@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 04:55:05 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 05:07:00 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ Serveur::~Serveur()
 	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 		delete it->second;
 	_channels.clear();
+	if (_epollfd)
+		close(_epollfd);
 }
 
 void Serveur::start()
