@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdUser.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:19 by pscala            #+#    #+#             */
-/*   Updated: 2025/05/30 01:23:38 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 04:01:43 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void Serveur::cmdUser(Client &client, const std::vector<std::string> &params)
 {
     if(client.get_hasPass() == false)
 		cmdError(client,"Access denied by configuration");
-    
+
     if (client.isRegistered())
     {
         sendError(client, 462, "USER", "You may not reregister");
@@ -54,7 +54,5 @@ void Serveur::cmdUser(Client &client, const std::vector<std::string> &params)
 
     client.testRegistered();
     if(client.isRegistered() == true)
-    {
         sendWelcomeMessages(client);
-    }
 }

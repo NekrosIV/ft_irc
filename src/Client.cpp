@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 19:57:37 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 04:01:51 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 #include "Client.hpp"
+#include "Serveur.hpp"
 
 Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false), _hasPass(false)
 {
@@ -84,9 +85,7 @@ void Client::testRegistered()
 	if(!isRegistered())
 	{
 		if (!_username.empty() && !_nickname.empty() && _hasPass)
-		{
 			_isRegistered = true;
-		}
 	}
 }
 

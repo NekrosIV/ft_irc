@@ -6,7 +6,7 @@
 /*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 02:12:04 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 04:22:10 by pscala           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ Serveur::Serveur(int port, std::string &password)
           << "👥  Waiting for clients to connect...\n"
           << "🛠️   Supported commands: " << BCYAN << "PASS, NICK, USER, JOIN, PART, PRIVMSG,\n"
           << "     NOTICE, QUIT, KICK, INVITE, TOPIC, MODE\n"
-          << BBLUE << "==============================================================\n"
+          << BBLUE << "=============================================================="
           << RESET << std::endl;
 }
 
