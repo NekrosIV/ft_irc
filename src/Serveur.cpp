@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 05:57:07 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 22:39:01 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Serveur::Serveur(int port, std::string &password)
 {
 	_port = port;
 	_password = password;
+	_passwordBOT = "IAMTHEBOT";
 	_server_fd = -1;
 	_servername = "SuperServer";
 	_serverVersion = "1.0";
@@ -208,7 +209,7 @@ void Serveur::setNonBlockSocket(const int fd)
 
 int Serveur::TryToSend(Client &client, std::string msg)
 {
-	size_t sent = send(client.getFd(), msg.c_str(), msg.length(), 0);
+	ssize_t sent = send(client.getFd(), msg.c_str(), msg.length(), 0);
 	if (sent < 0)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -219,7 +220,7 @@ int Serveur::TryToSend(Client &client, std::string msg)
 		else
 			removeClient(&client);
 	}
-	else if (sent < (size_t)msg.length())
+	else if (sent < (ssize_t)msg.length())
 	{
 		client.FillWriteBuffer(msg.substr(sent));
 		enableWriteEvent(client);

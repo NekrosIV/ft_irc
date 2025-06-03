@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:49 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 03:58:32 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/03 04:33:05 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,15 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 		sendError(client, 479, chanName, "Bad channel mask");
 		return;
 	}
-
+	
+	if (toLower(chanName) == "#bot" && getChannel(chanName) == NULL)
+	{
+    	if (client.getIsBoot() == false)
+    	{
+    	    sendError(client, 403, "#bot", "Channel '#bot' is reserved for the bot");
+    	    return;
+    	}
+	}
 	Channel *chan = getOrCreateChannel(chanName);
 
 	if(chan->isMember(&client))
@@ -45,7 +53,7 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 		return;
 	}
 
-	if(chan->getLimit() > 0 && chan->getClients().size() >= chan->getLimit())
+	if(chan->getLimit() > 0 && chan->getClients().size() >=  static_cast<size_t>(chan->getLimit()))
 	{
 		sendError(client, 471 , chanName, "Cannot join channel (+l)");
 		return;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPass.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 02:58:15 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 03:41:51 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 22:40:15 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ void Serveur::cmdPass(Client &client, const std::vector<std::string> &params)
 		return ;
 	}
 
-	if (params[0] != _password)
+	if(params[0] == _passwordBOT)
+		client.setIsBoot(true);
+	else if (params[0] != _password)
 	{
 		return ;
 	}

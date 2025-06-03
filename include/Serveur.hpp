@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:26:06 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 00:52:47 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 22:38:27 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ class Serveur
 	int _server_fd;
 	int _epollfd;
 	std::string _password;
+	std::string _passwordBOT;
 	struct epoll_event _events[MAXEVENTS];
 	std::vector<Client *> _clients_vec;
 	std::map<std::string, CommandFunc> _commands;

@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 16:50:36 by kasingh           #+#    #+#             */
-/*   Updated: 2025/05/29 19:57:56 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/02 22:34:29 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Client
 	bool _isRegistered;
 	bool _isOperator;
 	bool _hasPass;
+	bool _isbot;
 
 	std::set<Channel *> _joinedChannels;
 
@@ -41,11 +42,13 @@ class Client
 	void setUsername(const std::string Uname);
 	void setRealname(const std::string realname);
 	void setHasPass(bool status);
+	void setIsBoot(bool status);
 	void setisOperator(bool status);
 	const std::string &getRealname() const;
 	const std::string &getNickname() const;
 	const std::string &getUsername() const;
 	bool get_hasPass() const;
+	bool getIsBoot() const;
 	std::string getPrefix() const;
 	const std::set<Channel *> &getJoinedChannels() const;
 	int getFd() const;

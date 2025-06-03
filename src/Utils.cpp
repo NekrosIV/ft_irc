@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 23:38:39 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 02:09:47 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 22:13:25 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,12 @@ t_parsed_command parseIrcCommand(const std::string line)
 		result.params.push_back(trailing);
 	}
 	return(result);
+}
+
+std::string toLower(const std::string& str)
+{
+    std::string result = str;
+    for (std::string::size_type i = 0; i < result.length(); ++i)
+        result[i] = std::tolower(result[i]);
+    return result;
 }

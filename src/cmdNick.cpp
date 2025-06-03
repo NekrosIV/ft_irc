@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdNick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:58 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 04:20:41 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/02 22:37:24 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,12 @@ void Serveur::cmdNick(Client &client, const std::vector<std::string>& params)
 
 	if (client.getNickname() == params[0])
 		return;
-
+	
+	if (toLower(params[0]) == "bot" && client.getIsBoot() == false)
+	{
+	    sendError(client, 433, "bot", "Nickname 'bot' is reserved");
+	    return;
+	}
 
 	if (FindClient(params[0]) != NULL)
 	{

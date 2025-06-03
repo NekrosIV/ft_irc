@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/02 04:01:51 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/03 00:19:25 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "Client.hpp"
 #include "Serveur.hpp"
 
-Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false), _hasPass(false)
+Client::Client(int fd) : _fd(fd), _isRegistered(false), _isOperator(false), _hasPass(false), _isbot(false)
 {
 }
 
@@ -49,6 +49,11 @@ void Client::setHasPass(bool status)
 	_hasPass = status;
 }
 
+void Client::setIsBoot(bool status)
+{
+	_isbot = status;
+}
+
 void Client::setisOperator(bool status)
 {
 	_isOperator = status;
@@ -67,6 +72,11 @@ const std::string &Client::getRealname() const
 int Client::getFd() const
 {
 	return (_fd);
+}
+
+bool Client::getIsBoot() const
+{
+	return (_isbot);
 }
 
 bool Client::isRegistered() const

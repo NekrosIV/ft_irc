@@ -30,6 +30,7 @@
 #include <vector>
 #include <map>
 #include <csignal>
+#include <cctype>
 
 // Reset
 #define RESET "\033[0m"

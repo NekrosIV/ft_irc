@@ -1,9 +1,15 @@
 NAME :=  ircserv
+BONUS_NAME := ircbot
 CC := g++
-CFLAGS :=  #-Wall -Wextra -Werror -std=c++98
+CFLAGS :=  -Wall -Wextra -Werror -std=c++98 -MMD
 
 SRCS_DIR := ./src
 OBJS_DIR := ./objs
+BONUS_DIR := ./bot
+
+CURL_INC   := -I./bot/curl_local/include
+CURL_LIBS  := -L./bot/curl_local/lib -lcurl -lssl -lcrypto
+
 
 HEADERS := ./include
 FILES := main.cpp \
@@ -27,9 +33,16 @@ FILES := main.cpp \
     		cmdUser.cpp
 
 
+BONUS_FILES := bot.cpp
+
+
 SRCS := $(addprefix $(SRCS_DIR)/, $(FILES))
 OBJS := $(addprefix $(OBJS_DIR)/, $(FILES:.cpp=.o))
 DEPS := $(OBJS:.o=.d)
+
+BONUS_SRCS := $(addprefix $(BONUS_DIR)/, $(BONUS_FILES))
+BONUS_OBJS := $(BONUS_SRCS:.cpp=.o)
+BONUS_DEPS := $(BONUS_OBJS:.o=.d)
 
 
 # COLOR #
@@ -51,6 +64,7 @@ MINT_GREEN := \033[38;5;38m
 
 # Rules
 all: $(NAME)
+bonus: $(BONUS_NAME)
 
 $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) -I$(HEADERS) -o $(NAME) $(OBJS)
@@ -89,8 +103,43 @@ $(NAME): $(OBJS)
 	@printf "⠀⠀$(GREEN)⠀⢠⡾⢋⠾⢡⠀⡿⡟⠺⢶⣅⠐⠄$(PINK)⠑⢻⡿⠚⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀$(BLUE)⠀⠀⢴⡀⠈⠲⣙⠻⢿⣿⣿⣿⣿⣿⣿⢦⣴⡤⠀$(PURPLE)⠀⠀⠀⠀⠈⣿⠠⠒⢢⡴⢶⠞$(GREEN)⢄⡖⣿⣿⢟⢱⡟⢁⠒⠌⣀⡾⠛⠿⡦⢄⠀⠀⠩⠦⢤⠉$(GOLD)⠠⡀⠀⠀⢸⠄$(DARK_BLUE)⠡⠠⠏⠹⠂⠀⠈⣀⠤⠠⠤⠀⠀⠀⠀⠃⠀⠀⠀$(GOLD)⢸⠀⠀⠀⠀⠀⠀⠀⠀\n"
 	@printf "⠀⠀⠀$(GREEN)⠃⠁⠈⠘⠀⠀⠁⠁⠀⠀⠈⠁⠁⠀$(PINK)⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(BLUE)⠀⠀⠈⠀⠀⠀⠀⠀⠀⠉⠛⠙⠋⠉⠐⠉⠁⠀$(PURPLE)⠀⠀⠀⠀⠀⠂⠘⠀⠐⠈⠉⠃⠀$(GREEN)⠚⠉⠛⠁⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(DARK_BLUE)⠚⠁⠀⠁⠀⠀⠀⠀⠀⠀$(GOLD)⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀$(RESET)\n"
 
+$(BONUS_NAME): $(BONUS_OBJS)
+	$(CC) $(CFLAGS) $(BONUS_OBJS) $(CURL_INC) $(CURL_LIBS) -lz -lbrotlidec -lbrotlicommon -o $(BONUS_NAME)
+		@printf "$(RESET)\n\n\n"
+	@printf "⠀⠀$(PURPLE)⢀⠂⠘⠀⠱⠈⡝⣏⠐⠀⠑⠒⠤⣼⢶⠁⣠⠀⠠$(INDI)⠀⠀⠀⠀⢸⠍⣎⢙⣿⣿⢿⡁⠤⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣄⡀⠀$(RED)⠀⠀⠀⠀⠀⠀⠄⣡⠀⠈⠒⠄⢄⠀⠀⠀$(INDI)⠐⣫⡇⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠶⣷⣴⣥⣐⠘⢟⡟⡧⢛⣤⣳⣿⣿⠿⠟⠉⠀⠀⣰⡛⠄$(BLUE)⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⡇⠒⡤$(RESET)\n"
+	@printf "⠀$(PURPLE)⠀⡠⠒⠂⠡⠐⠁⡠⠠⢈⠍⠁⠀⠘⢟⢾⣿⣿⡀⠁$(INDI)⠀⠀⠀⠀⠘⢦⠰⣍⡻⣿⢀⢺⠁⠀⠀⠀⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⢹⣿⣿⣿⣆⡀$(RED)⠀⠀⠀⠀⢠⢚⡤⡸⢊⣀⢨⣌⠀⠀⠀$(INDI)⢚⡿⠀⡰⠀⡀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠉⠛⠊⢀⠔⠿⠿⠋⠉⠀⠀⠀⠀⠀⣸⣿⣯$(BLUE)⠀⢀⡠⠶⣀⠀⠀⠀⠘⣿⡅⠈⠌⠋$(RESET)\n"
+	@printf "⠀$(PURPLE)⠈⡄⠀⠀⠆⠈⢐⠡⠀⠀⠀⢀⣐⡁⠐⠉⡛⡛⠹⠈⢄⠀$(INDI)⠀⠀⠀⢿⡂⢿⣿⣮⠸⡇⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣛⠛⠿⣿⣶⡶⢬⣉⣿⣿⣿⡥$(RED)⠀⠀⠀⠀⠢⠋⡠⢴⣋⢆⠁⠈⠁⡀$(INDI)⢰⣿⠁⢠⠁⢸⡗⠀⠁⢢⡄⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡽⣿⣿$(BLUE)⢲⠟⠨⠽⣛⣤⠀⠈⠀⣥⣰⡆⣄⣂$(RESET)\n"
+	@printf "⠀$(PURPLE)⠀⠀⠀⠁⠂⠀⠀⢃⣠⣾⣿⣿⣿⣿⡀⠀⠁⠈⠀⢀⠨⡀$(INDI)⠀⢀⡳⠵⣥⡘⢿⣯⠳⡀⣀⠀⠀⢠⣿⣿⣿⠡⣶⠂⢉⡐⡠⠄⡙⣿⣼⡿⠿⠿⣟⢾$(RED)⠀⠀⠀⠀⠈⢠⡍⣤⢭⣤⣬⢀⠀⠀$(INDI)⠢⠈⠀⠎⠀⣈⠁⠀⠀⠛⠃⠀⠈$(GOLD)⣠⡄⡄⢠⣐⢠⣴⣷⣾⣄⢆⡠$(INDI)⠀⠄⢀⠀⠀⢀⠎⡽⣿⣿⠇$(BLUE)⠶⣤⣾⣿⣿⡆⢀⠀⣿⣿⣿⣷⡇$(RESET)\n"
+	@printf "⠀⠀⠀⠀$(PURPLE)⢰⣶⣶⣶⣿⣿⣿⣿⡿⠿⠿⢷⣤⣄⠀⢀⠠⠚⢱$(INDI)⣶⢮⣥⢄⣬⠝⢷⣝⠃⢂⠌⠻⣄⣾⣿⣿⣿⣧⣬⣤⣤⣜⣹⣾⣿⣿⠉⠀⠀⠐⢢⡝⡐⠀⢀$(RED)⠀⡡⡀⢃⣶⣶⣶⣯⡜⠁⠀$(INDI)⡟⠀⠘⠀⡀⣈⠀⠀⢰⡇$(GOLD)⠠⣀⣀⢟⠵⣚⣭⣴⣿⣿⣶⣶⣆⡤⢆⣉⢁⠐⠪⢐$(INDI)⠻⣆⠹⠝$(BLUE)⡁⠠⠈⠁⠀⣹⡿⠁⢸⣦⠘⢟⢣⠤⠈$(RESET)\n"
+	@printf "⠀$(PURPLE)⠀⠌⡧⢘⣿⣿⣿⣿⣿⣿⢿⣾⣿⣿⣿⢿⣿⡆$(INDI)⣮⣀⠈⢐⡪⢦⡄⠈⠗⢠⣷⣍⠂⡿⠰⠂⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⢠⡀⠈⠽⡀⠀⣠⡴⠃$(RED)⠀⢑⡄⣒⠐⠒⠂⠭⢑⠀$(INDI)⣴⠇⠀⣶⠀⠀⠩⠒$(GOLD)⣰⣵⣿⣿⣯⡝⡵⢟⣻⣿⣿⣿⣿⣿⣿⣟⡻⢿⣾⣽⣖⡥⣺⢿⣮⣕⡆$(BLUE)⣷⠀⠀⢀⠺⠟⠀⣠⠼⣫⣴⠆⠀⠂⠄$(RESET)\n"
+	@printf "⠀⠀$(PURPLE)⠼⡓⡀⣌⠛⢿⣿⣿⣧⢊⡾⣟⠩⣢⣿⣿⡿$(INDI)⢘⣟⠃⠨⠀⠋⢥⡜⠿⠿⣿⡟⠂⠑⢄⣀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⡿⠃⣿⣿⣟⠃⡜⠉⢔⣡⣶⡿$(RED)⠐⠡⢣⠒⠜⠦⠀$(INDI)⢸⡏⠀⠀⣋⡀⠀$(GOLD)⢖⢿⣿⣿⡿⠳⠶⢠⣾⢿⣿⣿⣿⣿⣿⣿⣿⣿⢿⡻⣾⣽⡻⣿⣶⣥⡚⣙⠢$(BLUE)⠿⠇⣀⣀⡈⠰⠂⠲⣿⣿⡿⠁⠀⠀⠀$(RESET)\n"
+	@printf "⠀⠀$(PURPLE)⠠⢡⠱⣄⠛⢗⢹⣿⣷⣷⣾⣿⡏⠻⣿⣿⣿$(INDI)⠂⠩⡔⣠⡦⢚⣵⣶⣽⡆⣹⡟⠀⠀⠀⠧⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣋⠤⣜⢿⣻⡞⠀⢀⣼⣿⣿⡟⠁⠀⠀⡀$(RED)⠀⠀$(INDI)⣀⣤⣾⠀⠀⠀⠹⢃$(GOLD)⢆⣵⡿⣫⣶⣾⣭⢋⢉⣾⣿⣿⣿⣿⣿⣛⠿⣿⣿⣿⣶⣼⡛⢿⣷⣭⡻⢯⡒⢝⠿⠆$(BLUE)⠀⠀⢁⡄⠀⢰⣝⡛⠀⠀⠀⠀⠀$(RESET)\n"
+	@printf "⠀⠀$(PURPLE)⢐⡠⢿⣿⡆⠘⢻⣿⣿⣿⣿⣿⣿⣀⣽⣿⣿⣇$(INDI)⢀⠄⢿⡡⢾⣿⣝⣿⡇⣤⠠⠁⠀⠀⠇⠀⢸⣿⣿⣿⣿⣿⣿⡿⠿⠿⣭⡐⠻⣜⣯⡟⠀⣠⠟⣽⢫⢃⣠⣤⣶⠟$(INDI)⠀⠀⠠⠿⣿⡃$(GOLD)⠀⠀⠀⠰⢋⣾⡷⢢⡿⣿⣿⡿⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣶⣄⡛⣿⣽⢿⣷⣤⡠⣍⡛⠚⠥⠈⠈⠢⠀$(BLUE)⠿⣀⠆⣪⡶⠁⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀$(PURPLE)⠰⡜⣄⠢⢍⠀⣼⣿⡿⣿⣿⣿⣿⢟⣽⣝⠻⣃$(INDI)⣀⡙⠶⣝⣂⠉⠛⢿⣧⢿⡀⠀⠀⠀⠀⡄⠀⠙⠿⣿⣿⣿⣿⣷⡲⡰⢤⡬⣗⣿⠊⠀⡰⢥⠛$(BRIGHT_RED)⣈⢤⣭⣅⡲⢔⠄⡀$(INDI)⠀⠀⠀⠀⠉⠲⣦$(GOLD)⣔⣜⣾⣻⣱⡿⣹⣿⣿⡷⣸⣿⣿⣿⠿⣿⣿⣝⡻⣮⣻⣿⣿⣮⡛⠿⣿⣝⢿⣦⡙⢦⢈⠛⢧⣢$(BLUE)⡹⡏⠀⢰⡿⠁⠀⠀⠀⠀⠀⠀$(RESET)\n"
+	@printf "⠀⠀⠀$(PURPLE)⢡⠂⡍⢢⣦⢩⡑⢐⠛⠫⠽⣢⣯⣝⢟⣡$(INDI)⣤⣬⣭⣿⣿⣮⣗⡠⣂⠹⣞⣿⡈⠄⠀⢰⣧⣃⠐⣀⠈⠻⣿⣿⣿⣷⣙⣧⢻⠝⠀⠀⢌⠑⡂$(BRIGHT_RED)⣨⣙⡛⡔⠢⡙⡌⠇⠁⡤$(GOLD)⠀⠀⠀⠀⠀⢨⢎⣞⡏⣿⣸⣡⡿⡟⣿⣧⣙⣿⣿⠿⣿⣮⡛⣿⣿⣮⡻⣷⣽⡙⠿⣧⡈⠙⢧⠈⠛⢦⠻⣕⢤⡁⠹$(BLUE)⡜⡄⠘$(RESET)⠀⠀⠀⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀$(PURPLE)⡀⠡⠈⢄⢫⡿⠋⣠⣾⣿⣿⣶⡿⣹⠋$(INDI)⠀⡝⠿⣿⣿⡿⣿⣿⣿⣿⣾⣶⣜⣿⣧⠁⠀⠀⠉⠻⠄⠲⢢⠄⠈⠙⠟⣶⡹⠎⠁⠀⠀⠈⠀⣴⡇$(BRIGHT_RED)⣟⢭⠁⢨⣵⣶⣶⣾⣇⠀⠀⠐⢢⠈⡗$(GOLD)⠎⣼⢻⢹⣟⣿⢿⣷⡇⡟⢿⣧⢘⣿⣎⢮⡻⣿⣶⣍⢻⣿⣶⡙⢷⣄⠈⠛⢆⠀⠑⢤⣀⠑⠙⢮⣻⣄⢻⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀$(PURPLE)⠴⣣⣼⠀⣦⢎⡊⠀⣼⣿⡿⠫⠞⠁$(INDI)⢀⠍⢘⣛⣂⣉⠹⠒⠦⠋⠝⠻⢿⣍⠘⢿⡆⠀⣀⠀⢄⠀⠀⠀⠙⣦⠀⡀⠀⠀⣠⠀⠀⠀⠀⢘⣻⣿⡄$(BRIGHT_RED)⡁⠀⣦⠿⠿⠷⣉⠁⠈⢄⠀⣼⢠⢃⣾$(GOLD)⠇⡟⣺⡧⣟⢹⡇⡇⣿⣤⢻⡆⠻⣿⣄⡙⢬⠻⢿⢧⡘⢿⣌⠪⣧⡀⢀⠀⠡⠑⢦⡘⣦⡈⠀⡳⢻⢘$(DARK_BLUE)⠄⢀⢀⠀⠀⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀$(PURPLE)⠠⠛⢃⡋⢗⢃⣵⠾⡿⡫⢄⡃$(INDI)⠀⠀⠈⠀⠀⠙⠟⢿⣿⣿⣿⡿⢶⣦⠄⠩⠂⠈⢿⡰⠀⠀⠈⢳⡠⠀⢡⣿⡝⡶⠀⡞⡄⣀⠀⠀⠀⠎⢙⣭⡟$(BRIGHT_RED)⠀⠀⢿⣷⣶⣾⡿⠄⠉⠸⡄⣾⢺$(GREEN)⢄⠵⡄$(GOLD)⡇⢟⣅⣿⠸⠁⡇⢿⡌⢏⢿⡀⠉⠻⣿⡄⠑⡀⠁⠙⣄⠻⣆⠀⢻⡄⠂⠄⠀⠄⠻⣌⠏$(DARK_BLUE)⣦⣼⣧⣈⣿⣾⣥⣢⡤⣄⡀⠀⠀⠀$(RESET)\n"
+	@printf "⠀⠀⠀$(PURPLE)⣦⣅⠢⠍⠉⠉⠈⢊⣙⡀⠂$(INDI)⠀⠀⠀⠀⠀⠰⠦⠥⡽⠋⠁⢐⠠⠂⡀⠁⠀⠁⠎⢣⠐⠎⡂⡀⠑⢄⣻⣛⠋⠑⣪⡗⠃⠀⠀⠀⠀⠐⠿⠟$(BRIGHT_RED)⠀⠹⣶⡀⠛⠿⣟⡀⢀⢟⣬⠀⡿$(GREEN)⡑⠁⠀⠃$(GOLD)⠀⠞⠋⠀⢀⡇⠱⠘⣧⠘⠌⢳⡀⠀⠈⠻⡄⣌⠠⠀⠀⠂⠙⡆⡄⠻⡄⢃⡆⡨$(DARK_BLUE)⠠⢭⣭⣾⣿⣿⠿⣿⣻⣿⣿⢷⣽⠃⠀⡄⢆$(RESET)\n"
+	@printf "⠀$(PURPLE)⣠⡾⡿⠂⡰⠀$(RESET)⣤⣧⣄$(PURPLE)⠒⠀⠀⠥⠀$(MINT_GREEN)⠀⠒⢒⠀⠀⢤⡄⠐⠀⠀⡀⠀⠻⢿⣿⣷⣶$(INDI)⡱⢠⠠⣤⠔⢤⠚⢂⢢⡄⢀⡘⠃⠀⠀⠀⠀⠀⠀⠀$(BRIGHT_RED)⢠⣿⣄⠀⠀⠙⠀⠀⠈⠁⠈⡏⠇$(GREEN)⠈⠔⠀⠀⠀⠀⠀⠀⠀⠀$(GOLD)⣼⠝⡠⠃⠈⠆⠈⠀⠡⠀⠌⢦⣀⠙⢠⠀⡀⣶⣄⡐⠸⡀⢻⡀$(DARK_BLUE)⡜⠌⡳⣓⠽⡿⠛⠡⠒⠙⠿⢿⣿⣓⢁⣠⠺⣿⡆$(RESET)\n"
+	@printf "⠀⣩⣵⣃⠀⠁⡴⣿⣟⣯$(PURPLE)⠰⡦⠐⠐⠶⠂$(MINT_GREEN)⢀⣨⣤⣶⠞⠁⠐⢶⢶⠇⡀⠀⠈⢙⠿⢫$(INDI)⢃⣾⡦⡉⠀⣈⠦⢊⠺⡷⠺⠁⠀⡐⠂⠀⠀⠀⠀$(BRIGHT_RED)⢠⣾⣿⣿⣦⣀⢀⡀⠀⠀⢀⠠⢱⠀⠀⠀⠀⠀$(GREEN)⡀$(GOLD)⠀⠀⠀⠀⠀⢉⣴⠃⢀⠀⠀⠀⠀⠠⣄⠐⢮⠛⢠⣌⠀⢣⡿⣽⣧⠀⢣⠘⣇⢡$(DARK_BLUE)⠐⢳⣽⡔⠡⢀⣠⣆⠀⠐⠚⢯⢛⣬⡯⠴⣿⡓$(RESET)\n"
+	@printf "⠀⢉⣉⠛⠿⡆⣯⣉⡭⠍⢂⡔⠂⠀⠀⠁$(MINT_GREEN)⠻⣿⣿⠁⠀⢀⠘⡠⢜⣀⡾⠀⠀⠀⠀$(ORANGE)⢃⢸⡏⢩⣕⠊⠀⠉⠂⠀⠠⢂⡀⠀⠡⣓⡀⠀⠀$(BRIGHT_RED)⢀⣿⣿⣿⣟⢹⣿⠿⣪⣿⣿⣈⠤⠈⠁$(GREEN)⣤⣶⡿⠉⠩⣥⠀⠀⠀⠀$(GOLD)⠉⣠⢆⠀⡣⠍⠱⠷⣒⣬⡺⣬⣿⣥⣶⣶⣶⣿⣿⣿⠀⠈⠀$(DARK_BLUE)⠨⠈⠑⠒⠙⢏⠀⢹⣿⣿⣶⣒⠩⠑⢽⢩⠉⠀⠘⠃$(RESET)\n"
+	@printf "⠀⠈⠛⠿⣦⢀⠐⠆⡠⢀⡒⠀$(YELLOW)⢲⡿⡿⣝⣕⣌⡳⠀$(MINT_GREEN)⠀⢠⠀⢛⡓⣉⡕⠐⡀$(ORANGE)⣴⣦⡌⢸⡱⠋⠈⠀⠀⠀⠀⠀⠀⢀⠃⠠⡒⠋⠀⠀⠀$(BRIGHT_RED)⣸⣿⣫⣶⡾$(PURPLE)⣦⡀⢰⡙⣣⠞⣫⠴⡲⠦$(GREEN)⠢⢹⣶⣧⣠⣿⡃⠀⠀$(GOLD)⡀⢼⡚⢇⡂⠉⣷⢿⣿⣿⡿⠁⢹⣿⣿⣿⣿⡿⠛⠉⠁⠀⠀$(DARK_BLUE)⠉⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣽⣿⢆⢐⠄⡛⣁⢦⠀⠀$(RESET)\n"
+	@printf "⠀⠀⠀⢀⣐⠮⠥⠄⣀⡠$(YELLOW)⡀⢶⡿⡇⠹⠜⠎⢫⡄⠁$(MINT_GREEN)⠀⡄⢩⣐⡉⠌⡈⠴$(ORANGE)⠀⠉⠉⠀⠘⣠⡄⠀⢀⠀⠀⠀⠀⠀⢸⡇⢀⡠⠄⠀⠀⠀$(BRIGHT_RED)⣿⠃$(PURPLE)⠈⠻⡧⠹⢯⠳⣣⠉⠊⡔⠣⠄⠙⢻⣦$(GREEN)⠛⠙⢿⡿⠀⠀$(GOLD)⠈⠣⢀⠑⠆⠙⠤⠀⠙⣿⣻⡵⣖⠤⢿⣿⣿⣿⡇⠀⠀⠀$(DARK_BLUE)⠁⠀⠀⢠⡀⠀⠀⠀⠀⠀⠀$(GOLD)⢀⣶⣦⣰⡀⠀⠀⠀$(DARK_BLUE)⠋⠈⠀⠀$(RESET)\n"
+	@printf "⠀⠀⣰⣭⣛⡛⣛⣫⠍$(YELLOW)⠀⠧⠀⠘⠈⣀⡄⠀⠀⠀⠀$(MINT_GREEN)⠐⠃⠈⠻⠏⠀⠀⣱$(ORANGE)⠀⠀⠀⠀⢀⠑⠠⣦⣨⣬⠀⠀⠀⠀⣼⣇⡉⡸⠁⠀⠀⠀$(BRIGHT_RED)⢹⠀⡀$(PURPLE)⠔⢊⠵⠉⠂⠀⠠⢶⣶⠶⣦⣄⠀⠺$(GREEN)⢕⣰⠂⠚⡟⢧⣉⠐⡒⢄$(GOLD)⠠⠁⣀⠁⠀⠀⠁⠛⢼⣫⣭⣿⣿⢟⣾⡦⠀⠀$(DARK_BLUE)⢐⠎⢗⠈⢰⠀⠀⠀⠀⠀⠀$(GOLD)⠈⣿⣿⣷⢵⣕⣔⣀⡀⠀⣠⡇\n"
+	@printf "⠀⠀$(RESET)⢹⣛⣙⠁$(YELLOW)⠨⠡⠄⠀⠀⠀⠀⣌⣿⣷⣾⠟⣱⡇$(MINT_GREEN)⠀⠀⠀⠀⠀⠀⡰⠁$(ORANGE)⠀⠀⠀⠀⠈⠳⠦⠙⠿⠮⠉⠀⠀⠀⣉⠅⠀⠁⠀⠀⠀⠀$(BRIGHT_RED)⠘$(PURPLE)⠄⠘⠀⢃⠒⡡⠄⢤⠩⢍⠈⠓⢡⠈⠓⡀⠀$(GREEN)⢹⡀⠈⢀⠃⢚⡓⠦⠈⢂⠦⣐⠦⣄⠤⢀⠀⠀⠀$(GOLD)⠋⠉⢠⡾⠃⣠⡧⠀$(DARK_BLUE)⢼⠎⠈⢿⣆⠀⠀⠀⠀⠀⠀$(GOLD)⣠⠿⠻⠟⣸⡞⣿⣿⣿⣿⣷⣽\n"
+	@printf "⠀⠀$(YELLOW)⢷⡍⠿⣀⠀⣀⡠⠂⣀⠀⠀⠙⠛⠿⢫⠦⠉⣀⠀⠀⠐⡀⡄$(ORANGE)⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣬⡆⡿⠀⠁⠀⠀⠀$(PURPLE)⢠⣋⠡⡌⠥⢉⠄⡐⣂⠒⠢⠄⣈⠥⢘⡂⠁⠀⠑⡀$(GREEN)⡇⢨⡄⢀⠘⠣⠙⠐⠀⢂⠆⠙⠖⠀⢠⠀⠔⠑$(GOLD)⣢⠤⠛⣈⣥⠾⠿⠁⠀⠀⠀⠀⠀$(DARK_BLUE)⠈⠉⠀⠀⠀⠀$(GOLD)⢠⠖⢶⣚⠗⣩⢾⠿⠿⢍⣝⣳⣭\n"
+	@printf "⠀⠀$(YELLOW)⠈⠉⠈⣼⡶⢛⡑⠄⢀⢖⣦⣦⠲⠈⣠⡆⠂⠹⠛⠽⢿⣿⡿⢍⣴⣆$(ORANGE)⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠄⠜⠐⢠⠀$(PURPLE)⢀⠔⢛⣫⣷⡟⡰⢂⠌⢀⡑⢦⣙⡰⣦⡐⡙⢶⡈⡀$(GREEN)⠀⠠⣣⡴⣮⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(GREEN)⠈⡀⠀$(GOLD)⢀⣠⣡⣄⠶⠘⢋⣼⡄⠀⠀⠀⠀⠀⠀⠀⠀⢠⠆⠀⢀⣫⣻⠛⠁⠌⣋⣤⢷⣾⣻⢿⡿⣟\n"
+	@printf "⠀⠀$(YELLOW)⠠⣌⡄⣿⣅⠘⠀⠀⣌⣿⣿⣿⠁⢀⠗⣀⢯⢻⡇$(PINK)⢀⣿⡎⢙⣆⡉⠿⠆⣠⣀⠀$(ORANGE)⠀⠀⠀⠀⠀⠀⢀⣿⠀⠀⢠⠃⠀$(PURPLE)⢀⠴⢋⣽⠿⡼⢳⠃⢀⣤⡸⢢⡝⣿⣮⡻⢮⠲⡙⣄$(GREEN)⢢⢠⣅⠛⣫⡾⣷⠀⠀⠀⠀⠀⠀⢀⠐⡐⠲⡅$(GOLD)⡤⠟⠋⣉⢠⡔⢞⣾⡇⠀$(DARK_BLUE)⣀⠐⠒⣒⣀⠀⠀$(GOLD)⠀⡞⡀⠀⠀⠘⠁⣀⠶⠩⠛⠯⣿⡼⣏⡿⣵⢫\n"
+	@printf "⠀⠀$(YELLOW)⠐⠀⠀⣿⣿⠀⣰⣦⢸⡏⡆⡿⠀⢰⣏⣏$(PINK)⡈⠘⢃⣰⣜⢷⣌⢿⣿$(BLUE)⡘⣷⣦⡉⠃⠉⠑⡀$(ORANGE)⢀⠒⠀⡀⠀⠀⠈⠂$(PURPLE)⠀⠀⠈⢠⠙⠁⠘⠁⢀⠀⢾⣿⣧⠁⠻⠑⡉⢓⠀⠀⠂⠴$(GREEN)⡈⢖⣤⠦⣄⣘⣩$(GOLD)⠴⣾⣶⡆$(GREEN)⠀⠀⣀⡤⢠⠈⡃⠕$(GOLD)⢞⠛⠋⡀⣴⡿⢊⡀$(DARK_BLUE)⠰⡭⣤⣜⡛⠯⣷⢦⣄$(GOLD)⠸⠈⠀⡀⠀⠀⠙⢾⡀⠀⠈⠀⠈⠉⠓⢭⣥\n"
+	@printf "⠀⠀$(YELLOW)⣱⡀⢸⣿⣿⡎⣿⠇⢸⢱⠇⠀⠀⣾⢸⢹⣇$(PINK)⠛⢈⢳⣿⣮⢿⣷⣿⣷⢠$(BLUE)⡛⢿⣶⣄⡀⠀⠀⠀⠁⣠⣤⣶⣶⣾⣷⣶⣄$(PURPLE)⠂⠀⠄⠀⠀⢈⢘⡊⣿⣿⠀⡄⢡⠀⠀⠡⢀⠈⠄⠸$(GOLD)⣜⣷⣾⣿⣿⣿⣿⡶⢩⠆$(GREEN)⣀⣤⣶⣦⣕⠂⡈⠆$(GOLD)⢸⣿⡌⠁⢀⢠⡩⠗⡀$(DARK_BLUE)⠙⠚⠶⢹⠳⠖⠋⠓⢠⣤⣖⢍⣢⢀⠠⡶⢊⣀⠀⠀⠀⠀$(GOLD)⠤⠘⠛\n"
+	@printf "⠀⠀$(YELLOW)⠘⠀⡘⣿⠸⠃⠁⠀⠘⢬⠈⠀⢐⢯⠬⡜⠃$(PINK)⠉⡄⡧⢻⢿⣧⢹⣿⢿⠏⢿⡀$(BLUE)⠈⠋⠀⠀⠀⣀⣿⣿⣿⣿⣿⣿⣿⣟⢿⣷⡄$(PURPLE)⠀⠀⠀⡿⠐⠁⢾⡿⣘⠁⣰⡆⢰⠀⠀⠂⢉⢎$(GOLD)⣾⣿⣿⠿⠿⠟⢋⡁$(GREEN)⢳⣿⣿⢙⣏⢿⡿⠀⠀⠀$(GOLD)⡾⠉⠀⠰⢊⠁⠀⠀⠘⢤⡀⢀⡀$(DARK_BLUE)⠐⠃⠀⠻⣱⣌⠛⢷⣮⡠⠉⡠$(GOLD)⡽⣿⣿⣿⡿⠿⠿⠓⠒\n"
+	@printf "⠀⠀$(YELLOW)⠀⠀⠀⠘⠀⠀⠀⠀⠰⠎⠃⠀⠮⢍⣊$(PINK)⠀⡆⡀⠁⢉⣀⠸⢻⠅⢿⠘⠀⠘⡇$(BLUE)⠀⠀⠀⠀⠀⢼⣿⢟⡡⣦⣤⠤⠐⣈⢻⡏⠐$(PURPLE)⠀⠀⢸⣿⣷⡚⢘⣿⣯⡴⡖⠂⢀⠀⠀⡀⡦$(GOLD)⣿⢟⡵⠚⢉$(GREEN)⣤⣷⡿⣣⡐⡠⠹⣾⣿⣦⡀⠀⠀$(GOLD)⣌⡵⣶⢫⠁⢇⡂⠀⣠⣄⡄⠒⢉⠀⠀⠀⠀⠀$(DARK_BLUE)⡀⢀⣀⣂⣐⣾⣦⡃$(GOLD)⢷⠉⠀⠀⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀$(GREEN)⠠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(PINK)⢠⢆⢇⠉⠄⠚⢷⡀⠈⠄⠈⠀⢠⡄⠀$(BLUE)⠀⠀⠀⠀⠀⢨⣿⣿⣯⣱⠊⣟⣥⣧⣾⢛⢷⣄⠀$(PURPLE)⠀⠹⣿⡷⢾⣿⢿⣿⣷⣤⠾⢀⣀⣐$(GOLD)⠉⠡⢁$(GREEN)⣤⣾⣿⢟⣯⣿⡿⠛⠀⠥⠙⠫⢱⡒⠒$(GOLD)⠈⢻⠟⣰⠃⠀⣊⡠⠜⠛⢣⣄⠴⠾⠓$(DARK_BLUE)⠤⢔⡬⣲⢭⣛⡼⡣⠟⠳⢻⠃$(GOLD)⢸⠀⠀⠀⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀$(GREEN)⠀⠀⠐⡂⠄⣀⢆⣭⣿⣤⣤⠃⠆⠀$(PINK)⠠⣾⣿⣆⡄⢀⡶⠁⠀⡀⠀⠀⠆⠉⠐$(BLUE)⠀⠀⡠⠄⡀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣏⠼⠢⠻⣧⡁$(PURPLE)⠀⠈⢻⡕⣽⢯⠿⣉⢁⣽⣿⠿⠋$(GREEN)⣠⣷⣿⣿⢟⣵⠿⢋⠡⢀⢐⣠⡆⠀⠀⠀⠃⠁⠂⢀$(GOLD)⠘⠃⠒⠈⢩⠀$(DARK_BLUE)⣚⡍⢛⣭⢡⢪⢋⡟⠙⠒⠃⠛⠈⠁⢀⡤⠄⠒⠀$(GOLD)⢸⠁⠀⠀⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀$(GREEN)⠀⢠⡾⢋⠾⢡⠀⡿⡟⠺⢶⣅⠐⠄$(PINK)⠑⢻⡿⠚⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀$(BLUE)⠀⠀⢴⡀⠈⠲⣙⠻⢿⣿⣿⣿⣿⣿⣿⢦⣴⡤⠀$(PURPLE)⠀⠀⠀⠀⠈⣿⠠⠒⢢⡴⢶⠞$(GREEN)⢄⡖⣿⣿⢟⢱⡟⢁⠒⠌⣀⡾⠛⠿⡦⢄⠀⠀⠩⠦⢤⠉$(GOLD)⠠⡀⠀⠀⢸⠄$(DARK_BLUE)⠡⠠⠏⠹⠂⠀⠈⣀⠤⠠⠤⠀⠀⠀⠀⠃⠀⠀⠀$(GOLD)⢸⠀⠀⠀⠀⠀⠀⠀⠀\n"
+	@printf "⠀⠀⠀$(GREEN)⠃⠁⠈⠘⠀⠀⠁⠁⠀⠀⠈⠁⠁⠀$(PINK)⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(BLUE)⠀⠀⠈⠀⠀⠀⠀⠀⠀⠉⠛⠙⠋⠉⠐⠉⠁⠀$(PURPLE)⠀⠀⠀⠀⠀⠂⠘⠀⠐⠈⠉⠃⠀$(GREEN)⠚⠉⠛⠁⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀$(DARK_BLUE)⠚⠁⠀⠁⠀⠀⠀⠀⠀⠀$(GOLD)⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀$(RESET)\n"
 
--include $(DEPS)
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.cpp
 	@mkdir -p $(OBJS_DIR)
@@ -99,12 +148,25 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.cpp
 	printf "\r$(LBLUE)[Compilation]$(RESET) Completed   ... $(GREEN)$<" && \
 	printf " $(LBLUE)[$(RESET)$(CC)$(LBLUE)/]$(RESET)\n"
 
+$(BONUS_DIR)/%.o: $(BONUS_DIR)/%.cpp
+	@printf "$(LBLUE)[Bot Compile]$(RESET) In progress... $(YELLOW)$<" && \
+	$(CC) $(CFLAGS) $(CURL_INC) -I$(HEADERS) -c $< -o $@ && \
+	printf "\r$(LBLUE)[Bot Compile]$(RESET) Completed   ... $(YELLOW)$<" && \
+	printf " $(LBLUE)[$(RESET)$(CC)$(LBLUE)/]$(RESET)\n"
+
+
+-include $(DEPS)
+-include $(BONUS_DEPS)
+
 
 clean:
-	rm -rf $(OBJS_DIR)
+	@rm -rf $(OBJS_DIR)
+	@rm -f $(BONUS_OBJS) $(BONUS_DEPS)
+	@printf "\r$(GREEN)$(NAME) is Clean\n$(RESET)"
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
+	@rm -f $(NAME) $(BONUS_NAME)
 
 re: fclean all
 
