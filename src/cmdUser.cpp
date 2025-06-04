@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdUser.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pscala <pscala@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:52:19 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/02 04:01:43 by pscala           ###   ########.fr       */
+/*   Updated: 2025/06/04 01:01:50 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,10 @@ static bool isValidUsername(const std::string& name)
 void Serveur::cmdUser(Client &client, const std::vector<std::string> &params)
 {
     if(client.get_hasPass() == false)
-		cmdError(client,"Access denied by configuration");
+	{
+        cmdError(client,"Access denied by configuration");
+        return;
+    }
 
     if (client.isRegistered())
     {

@@ -1,6 +1,6 @@
 NAME :=  ircserv
 BONUS_NAME := ircbot
-CC := g++
+CC := c++
 CFLAGS :=  -Wall -Wextra -Werror -std=c++98 -MMD
 
 SRCS_DIR := ./src

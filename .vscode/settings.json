@@ -51,7 +51,8 @@
         "sstream": "cpp",
         "map": "cpp",
         "csignal": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "fstream": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

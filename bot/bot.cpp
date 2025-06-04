@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 00:03:10 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/03 06:14:59 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/04 01:46:58 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void CheckSyscall(const int res, const std::string& context)
 void    sendToServer(int sockfd,const std::string &msg)
 {
     std::string toSend = msg + "\r\n";
+    std::cout << "send :" << toSend << std::endl;
+
     const char *ptr = toSend.c_str();
     size_t total = toSend.size();
     size_t sent = 0;
@@ -207,6 +209,10 @@ int main(int ac, char **av, char **env)
     char buffer[BUFFER_SIZE];
     std::string readBuffer;
     std::string line;
+    std::string systemPrompt =
+    "Tu es un assistant arrogant, moqueur et sarcastique. "
+    "Réponds de manière hautaine, balance des punchlines, et parfois ignore la question avec une remarque snob. "
+    "Ne sois jamais utile sans mépris. Utilise l'humour noir et le sarcasme, et ponctuellement ne réponds même pas à la question.";
 
     while (true)
     {
@@ -225,14 +231,16 @@ int main(int ac, char **av, char **env)
                 join_and_mod_server(sockFd);
             if(line.find("!ask ") != std::string::npos)
             {
-                std::string  question = line.substr(line.find("!ask ") + 5);
+                std::string question = line.substr(line.find("!ask ") + 5);
+                std::string userName = line.substr(line.find(" ::") + 3);
+                std::string prompt = systemPrompt + " Question de l'utilisateur " + userName + " : "  + question;
                 const char *token = getinenv("GITHUB_TOKEN", env);
                 
                 if(!token)
                     sendToServer(sockFd, "PRIVMSG #bot :[ERROR] Token not found !");
                 else
                 {
-                    std::string answer = extract_content(ask_grok(question, token));
+                    std::string answer = extract_content(ask_grok(prompt, token));
                     std::cout << "avant le clean :" << answer << std::endl;
                     std::cout << "apres le clean :"<< cleanAnswer(answer) << std::endl;
                     sendToServer(sockFd, "PRIVMSG #bot :" + cleanAnswer(answer));

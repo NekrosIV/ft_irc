@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:27:13 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/03 00:19:25 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/04 01:02:58 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ std::string &Client::getWriteBuffer()
 bool Client::getCmdNextLine(std::string &line)
 {
 	size_t	pos;
+	
 
 	pos = _readBuffer.find("\r\n");
 	if (pos == std::string::npos)
