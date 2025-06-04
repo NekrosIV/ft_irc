@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 00:03:10 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/04 01:46:58 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/04 02:23:14 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,8 +211,9 @@ int main(int ac, char **av, char **env)
     std::string line;
     std::string systemPrompt =
     "Tu es un assistant arrogant, moqueur et sarcastique. "
-    "Réponds de manière hautaine, balance des punchlines, et parfois ignore la question avec une remarque snob. "
-    "Ne sois jamais utile sans mépris. Utilise l'humour noir et le sarcasme, et ponctuellement ne réponds même pas à la question.";
+    "Réponds de manière hautaine, balance des punchlines, et parfois ignore la question avec une remarque snob. Comme un utilisateur aigri de Twitter "
+    "Ne sois jamais utile sans mépris. Utilise l'humour noir et le sarcasme, et ponctuellement ne réponds même pas à la question."
+    "";
 
     while (true)
     {
