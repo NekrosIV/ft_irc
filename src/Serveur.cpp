@@ -6,7 +6,7 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:54:45 by kasingh           #+#    #+#             */
-/*   Updated: 2025/06/04 02:18:50 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/06/05 16:52:36 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ int Serveur::TryToSend(Client &client, std::string msg)
 	ssize_t sent = send(client.getFd(), msg.c_str(), msg.length(), MSG_NOSIGNAL);
 	if (sent < 0)
 	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
+		if (errno == EWOULDBLOCK)
 		{
 			client.FillWriteBuffer(msg);
 			enableWriteEvent(client);
