@@ -6,88 +6,78 @@
 /*   By: kasingh <kasingh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 01:51:49 by pscala            #+#    #+#             */
-/*   Updated: 2025/06/03 04:33:05 by kasingh          ###   ########.fr       */
+/*   Updated: 2025/09/17 18:08:24 by kasingh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Serveur.hpp"
-#include "Client.hpp"
 #include "Channel.hpp"
+#include "Client.hpp"
+#include "Serveur.hpp"
 
-void Serveur::joinSingleChannel(Client &client, const std::string &chanName, const std::string &key)
+void Serveur::joinSingleChannel(Client &client, const std::string &chanName,
+	const std::string &key)
 {
-	if(chanName.empty() || chanName[0] != '#')
+	Channel	*chan;
+
+	if (chanName.empty() || chanName[0] != '#')
 	{
 		sendError(client, 479, chanName, "Bad channel mask");
-		return;
+		return ;
 	}
-	
 	if (toLower(chanName) == "#bot" && getChannel(chanName) == NULL)
 	{
-    	if (client.getIsBoot() == false)
-    	{
-    	    sendError(client, 403, "#bot", "Channel '#bot' is reserved for the bot");
-    	    return;
-    	}
+		if (client.getIsBoot() == false)
+		{
+			sendError(client, 403, "#bot",
+				"Channel '#bot' is reserved for the bot");
+			return ;
+		}
 	}
-	Channel *chan = getOrCreateChannel(chanName);
-
-	if(chan->isMember(&client))
-		return;
-
-	if(chan->isBanned(&client))
+	chan = getOrCreateChannel(chanName);
+	if (chan->isMember(&client))
+		return ;
+	if (chan->isBanned(&client))
 	{
 		sendError(client, 474, chanName, "You are banned from this channel");
-		return;
+		return ;
 	}
-
-	if(chan->isInvitedOnly() && !chan->isInvited(&client))
+	if (chan->isInvitedOnly() && !chan->isInvited(&client))
 	{
 		sendError(client, 473, chanName, "Cannot join channel (+i)");
-		return;
+		return ;
 	}
-
-	if(chan->isRequirePass() && chan->getPassword() != key)
+	if (chan->isRequirePass() && chan->getPassword() != key)
 	{
 		sendError(client, 475, chanName, "Cannot join channel (+k)");
-		return;
+		return ;
 	}
-
-	if(chan->getLimit() > 0 && chan->getClients().size() >=  static_cast<size_t>(chan->getLimit()))
+	if (chan->getLimit() > 0
+		&& chan->getClients().size() >= static_cast<size_t>(chan->getLimit()))
 	{
-		sendError(client, 471 , chanName, "Cannot join channel (+l)");
-		return;
+		sendError(client, 471, chanName, "Cannot join channel (+l)");
+		return ;
 	}
-
 	chan->AddClient(&client);
 	client.joinChannel(chan);
-
 	if (chan->getClients().size() == 1)
 		chan->addOperator(&client);
 	std::ostringstream joinMsg;
-
 	joinMsg << ":" << client.getPrefix() << "JOIN" << chanName << "\r\n";
-	broadcastToChannel(chan,joinMsg.str());
-
+	broadcastToChannel(chan, joinMsg.str());
 	std::ostringstream names;
-	names << ":" << _servername << " 353 " << client.getNickname()
-	      << " = " << chanName << " :";
-
+	names << ":" << _servername << " 353 " << client.getNickname() << " = " << chanName << " :";
 	if (!chan->getTopic().empty())
 	{
 		std::ostringstream topic;
-		topic << ":" << _servername << " 332 " << client.getNickname() << " "
-		      << chanName << " :" << chan->getTopic() << "\r\n";
+		topic << ":" << _servername << " 332 " << client.getNickname() << " " << chanName << " :" << chan->getTopic() << "\r\n";
 		TryToSend(client, topic.str());
 	}
 	else
 	{
 		std::ostringstream notopic;
-		notopic << ":" << _servername << " 331 " << client.getNickname()
-		        << " " << chanName << " :No topic is set\r\n";
+		notopic << ":" << _servername << " 331 " << client.getNickname() << " " << chanName << " :No topic is set\r\n";
 		TryToSend(client, notopic.str());
 	}
-
 	const std::set<Client *> &members = chan->getClients();
 	for (std::set<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
 	{
@@ -99,7 +89,6 @@ void Serveur::joinSingleChannel(Client &client, const std::string &chanName, con
 	}
 	names << "\r\n";
 	TryToSend(client, names.str());
-
 	std::ostringstream end;
 	end << ":" << _servername << " 366 " << client.getNickname()
 	    << " " << chanName << " :End of /NAMES list\r\n";
@@ -111,34 +100,31 @@ void Serveur::cmdJoin(Client &client, const std::vector<std::string> &params)
 	if (!client.isRegistered())
 	{
 		sendError(client, 451, " JOIN ", "You have not registered");
-		return;
+		return ;
 	}
-
-	if(params.empty())
+	if (params.empty())
 	{
 		sendError(client, 461, "JOIN", "Not enough parameters");
-		return;
+		return ;
 	}
-
-	if(params[0] == "0")
+	if (params[0] == "0")
 	{
 		const std::set<Channel *> &joined = client.getJoinedChannels();
-		for (std::set<Channel *>::iterator it = joined.begin(); it != joined.end(); ++it)
-			cmdPart(client, std::vector<std::string>(1, (*it)->getChannelName()));
-		return;
+		std::vector<std::string> channelsToLeave;
+		for (std::set<Channel *>::const_iterator it = joined.begin(); it != joined.end(); ++it)
+			channelsToLeave.push_back((*it)->getChannelName());
+		for (std::vector<std::string>::const_iterator it = channelsToLeave.begin(); it != channelsToLeave.end(); ++it)
+			cmdPart(client, std::vector<std::string>(1, *it));
+		return ;
 	}
-
-	std::vector<std::string>  chanNames = splitCommaList(params[0]);
+	std::vector<std::string> chanNames = splitCommaList(params[0]);
 	std::vector<std::string> keys;
-	if(params.size() > 1)
+	if (params.size() > 1)
 		keys = splitCommaList(params[1]);
-
 	for (size_t i = 0; i < chanNames.size(); ++i)
 	{
 		std::string chanName = chanNames[i];
 		std::string key = (i < keys.size()) ? keys[i] : "";
-
 		joinSingleChannel(client, chanName, key);
 	}
-
 }
